@@ -34,7 +34,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { usePatientStore } from '@/stores/patient'
+import { usePatientStore } from '@/stores'
 
 const search = ref('')
 const patientStore = usePatientStore()
