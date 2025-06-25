@@ -17,6 +17,7 @@
     "@tailwindcss/vite": "^4.1.5",
     "@vuepic/vue-datepicker": "^11.0.2",
     "@vueuse/core": "^13.1.0",
+    "axios": "^1.10.0",
     "daisyui": "^5.0.35",
     "pinia": "^3.0.1",
     "tailwindcss": "^4.1.5",

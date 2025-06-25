@@ -1,106 +1,70 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { useRouter } from "vue-router";
+import axios from "axios";
 
-export const useAuthStore = defineStore("auth", () => {
-  const token = ref("");
-  const user = ref(null);
+export const useAuthStore = defineStore("auth", {
+  state: () => ({
+    user: null,
+    token: localStorage.getItem("token") || null,
+    error: null,
+  }),
 
-  const setToken = (value) => {
-    token.value = value;
-    localStorage.setItem("token", value);
-  };
+  actions: {
+    async login(email, password) {
+      this.error = null;
+      try {
+        const res = await axios.post("/api/login", { email, password });
 
-  const clear = () => {
-    token.value = "";
-    user.value = null;
-    localStorage.removeItem("token");
-  };
+        this.token = res.data.token;
+        this.user = res.data.user;
 
-  return {
-    token,
-    user,
-    setToken,
-    clear,
-  };
+        localStorage.setItem("token", this.token);
+        axios.defaults.headers.common["Authorization"] = `Bearer ${this.token}`;
+      } catch (err) {
+        this.error = err.response?.data?.message || err.message;
+        throw err;
+      }
+    },
+
+    logout() {
+      this.token = null;
+      this.user = null;
+      localStorage.removeItem("token");
+      delete axios.defaults.headers.common["Authorization"];
+    },
+
+    async fetchUser() {
+      if (!this.token) return;
+      try {
+        const res = await axios.get("/api/me");
+        this.user = res.data;
+      } catch (err) {
+        this.logout();
+      }
+    },
+  },
 });
 
-export const useChatStore = defineStore("chat", () => {
-  const messages = ref([]);
+export const usePatientStore = defineStore("patient", {
+  state: () => ({
+    patients: [],
+    isLoading: false,
+    error: null,
+  }),
 
-  const addUserMessage = (msg) => {
-    messages.value.push({
-      role: "user",
-      message: msg,
-      timestamp: new Date(),
-    });
-  };
+  actions: {
+    async fetchAllPatients() {
+      this.isLoading = true;
+      this.error = null;
 
-  const addSystemReply = (msg) => {
-    messages.value.push({
-      role: "system",
-      message: msg,
-      timestamp: new Date(),
-    });
-  };
-
-  const resetChat = () => {
-    messages.value = [];
-  };
-
-  return {
-    messages,
-    addUserMessage,
-    addSystemReply,
-    resetChat,
-  };
-});
-
-export const usePatientStore = defineStore("patient", () => {
-  const patient = ref({
-    medicalRecord: "",
-    name: "",
-    birthDate: "",
-    gender: "",
-    symptoms: "",
-    diagnosis: [],
-  });
-
-  const setPatient = (data) => {
-    patient.value = { ...patient.value, ...data };
-  };
-
-  const resetPatient = () => {
-    patient.value = {
-      medicalRecord: "",
-      name: "",
-      birthDate: "",
-      gender: "",
-      symptoms: "",
-      diagnosis: [],
-    };
-  };
-
-  return {
-    patient,
-    setPatient,
-    resetPatient,
-  };
-});
-
-export const usePatientsStore = defineStore("patients", () => {
-  const patients = ref([]);
-
-  const addPatient = (patient) => {
-    patients.value.push(patient);
-  };
-
-  const clearPatients = () => {
-    patients.value = [];
-  };
-
-  return {
-    patients,
-    addPatient,
-    clearPatients,
-  };
+      try {
+        const res = await axios.get("/api/patients");
+        this.patients = res.data;
+      } catch (err) {
+        this.error = err.response?.data?.message || err.message;
+      } finally {
+        this.isLoading = false;
+      }
+    },
+  },
 });

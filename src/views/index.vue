@@ -1,30 +1,12 @@
 <template>
-    <div class="flex flex-col h-screen">
-        <Navbar />
-        <Drawer />
-        <div class="max-w-3xl lg:max-w-4xl mx-auto overflow-hidden">
-            <Welcome :is-empty-patient="isEmptyPatient(patient.patient)"
-                v-if="chat.messages.length == 0 || chat.messages.length === undefined" />
-            <Chat v-else />
-
+    <div class="p-6 bg-gray-100 min-h-screen">
+        <div class="flex flex-col items-center justify-center text-center text-base-content h-full py-64 px-4">
+            <h1 class="text-3xl font-bold mb-4">Welcome 👋</h1>
+            <p class="max-w-md text-sm opacity-80 mb-6">Your smart clinical assistant for symptom tracking and patient
+                records.</p>
         </div>
-        <InputBox :is-empty-patient="isEmptyPatient(patient.patient)" />
     </div>
-
 </template>
 
-
 <script setup>
-import Welcome from '@/components/Welcome.vue'
-import Chat from '@/components/Chat.vue'
-import Navbar from '@/components/Navbar.vue';
-import InputBox from '@/components/InputBox.vue'
-import Drawer from '@/components/Drawer.vue';
-
-import { useChatStore, usePatientsStore, usePatientStore } from '@/stores';
-import { isEmptyPatient } from '@/utils/util';
-
-
-const chat = useChatStore()
-const patient = usePatientStore()
 </script>
