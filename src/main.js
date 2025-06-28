@@ -18,12 +18,16 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 /* import specific icons */
 import { fas } from "@fortawesome/free-solid-svg-icons";
 
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+
 /* add icons to the library */
 library.add(fas);
 
 const app = createApp(App);
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
 
-app.use(createPinia());
+app.use(pinia);
 app.use(router);
 app.component("font-awesome-icon", FontAwesomeIcon);
 app.component("vue-date-picker", VueDatePicker);

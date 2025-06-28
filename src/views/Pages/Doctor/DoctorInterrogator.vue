@@ -1,6 +1,6 @@
 <template>
     <div class="p-6 bg-gray-100 min-h-screen">
-        <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Patient Symptom Input Form -->
             <div class="bg-white rounded shadow-md p-6">
                 <h2 class="text-2xl font-bold mb-4">Symptom Input</h2>

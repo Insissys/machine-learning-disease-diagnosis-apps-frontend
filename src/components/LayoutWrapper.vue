@@ -39,13 +39,17 @@
             <ul class="menu bg-base-300 text-base-content min-h-full w-80 p-4">
                 <div class="mb-4">
                     <label class="text-xs font-bold uppercase opacity-60 mb-2 block">Menu</label>
-                    <div v-if="userRole === 'doctor'">
-                        <li><router-link to="/doctor-patients" class="font-semibold" @click="handleAddButton">Waiting List</router-link></li>
+                    <div v-if="auth.user.role === 'doctor'">
+                        <li><router-link to="/waiting-list" class="font-semibold" @click="handleAddButton">Waiting
+                                List</router-link></li>
                     </div>
                     <div v-else>
-                        <li><router-link to="/" class="font-semibold" @click="handleAddButton">Dashboard</router-link></li>
-                        <li><router-link to="/patients" class="font-semibold" @click="handleAddButton">Patients</router-link></li>
-                        <li><router-link to="/users" class="font-semibold" @click="handleAddButton">User Management</router-link></li>
+                        <li><router-link to="/" class="font-semibold" @click="handleAddButton">Dashboard</router-link>
+                        </li>
+                        <li><router-link to="/patients" class="font-semibold"
+                                @click="handleAddButton">Patients</router-link></li>
+                        <li><router-link to="/users-management" class="font-semibold" @click="handleAddButton">User
+                                Management</router-link></li>
                     </div>
                 </div>
             </ul>
@@ -56,16 +60,17 @@
 <script setup>
 // Layout wrapper component
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores'
 
-const logout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('role')
-    router.push('/login')
-}
+const router = useRouter();
+const auth = useAuthStore();
 
 const handleAddButton = () => {
     document.getElementById('my-drawer-2').click();
-    modalPatient.value?.showModal()
 }
 
+const logout = () => {
+    router.push('/logout')
+}
 </script>

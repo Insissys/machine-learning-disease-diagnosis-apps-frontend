@@ -9,7 +9,10 @@ const router = createRouter({
       path: "/",
       name: "home",
       component: HomeView,
-      meta: { requiresAuth: true },
+      meta: {
+        requiresAuth: true,
+        allowedRoles: ["doctor", "admin", "superadmin"],
+      },
     },
     {
       path: "/patients",
@@ -18,8 +21,20 @@ const router = createRouter({
       meta: { requiresAuth: true, allowedRoles: ["admin", "superadmin"] },
     },
     {
-      path: "/doctor-patients",
-      name: "doctorPatients",
+      path: "/patients/create",
+      name: "patientsCreate",
+      component: () => import("@/views/Pages/Patient/PatientForm.vue"),
+      meta: { requiresAuth: true, allowedRoles: ["admin", "superadmin"] },
+    },
+    {
+      path: "/users-management",
+      name: "usersManagement",
+      component: () => import("@/views/Pages/UserManagement.vue"),
+      meta: { requiresAuth: true, allowedRoles: ["admin", "superadmin"] },
+    },
+    {
+      path: "/waiting-list",
+      name: "waitingList",
       component: () => import("@/views/Pages/Doctor/DoctorWaitingList.vue"),
       meta: { requiresAuth: true, allowedRoles: ["doctor"] },
     },
@@ -30,10 +45,20 @@ const router = createRouter({
       meta: { requiresAuth: false, layout: "none" },
     },
     {
-      // path: "/unauthorized",
-      // name: "unauthorized",
-      // component: () => import("@/views/Unauthorized.vue"),
-      // meta: { requiresAuth: false },
+      path: "/logout",
+      component: () => import("@/views/Pages/Logout.vue"),
+    },
+    {
+      path: "/register",
+      name: "register",
+      component: () => import("@/views/Pages/Register.vue"),
+      meta: { requiresAuth: false, layout: "none" },
+    },
+    {
+      path: "/unauthorized",
+      name: "unauthorized",
+      component: () => import("@/views/Pages/Unauthorized.vue"),
+      meta: { requiresAuth: false, layout: "none" },
     },
     {
       path: "/:pathMatch(.*)*",
@@ -42,11 +67,24 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const auth = useAuthStore();
-  if (to.meta.requiresAuth && !auth.token) return next("/login");
-  if (to.meta.allowedRoles && !to.meta.allowedRoles.includes(auth.role))
+
+  // Case 1: not logged in but route requires auth
+  if (to.meta.requiresAuth && !auth.token) {
+    return next("/login");
+  }
+
+  console.log(auth.user);
+
+  // Case 2: logged in but role is not allowed
+  if (
+    to.meta.allowedRoles &&
+    (!auth.user || !to.meta.allowedRoles.includes(auth.user.role))
+  ) {
     return next("/unauthorized");
+  }
+
   next();
 });
 

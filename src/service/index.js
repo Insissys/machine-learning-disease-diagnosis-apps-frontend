@@ -1,0 +1,47 @@
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token") || null;
+    if (token) {
+      config.headers.Authorization = `Bearer ${auth.token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    if (error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      try {
+        const refreshToken = localStorage.getItem("refreshToken"); // Or your preferred storage
+        const response = await axios.post("/api/refresh-token", {
+          refreshToken,
+        }); // Your refresh token endpoint
+        const newAccessToken = response.data.accessToken;
+        localStorage.setItem("jwtToken", newAccessToken); // Update stored token
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        return api(originalRequest); // Retry the original request
+      } catch (refreshError) {
+        // Handle refresh token failure (e.g., redirect to login)
+        return Promise.reject(refreshError);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default api;

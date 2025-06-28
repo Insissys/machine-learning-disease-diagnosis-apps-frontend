@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import axios from "axios";
+import api from "@/service";
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -31,17 +32,9 @@ export const useAuthStore = defineStore("auth", {
       localStorage.removeItem("token");
       delete axios.defaults.headers.common["Authorization"];
     },
-
-    async fetchUser() {
-      if (!this.token) return;
-      try {
-        const res = await axios.get("/api/me");
-        this.user = res.data;
-      } catch (err) {
-        this.logout();
-      }
-    },
   },
+
+  persist: true,
 });
 
 export const usePatientStore = defineStore("patient", {
@@ -49,7 +42,20 @@ export const usePatientStore = defineStore("patient", {
     patients: [],
     isLoading: false,
     error: null,
+    search: "",
   }),
+
+  getters: {
+    filteredPatients: (state) => {
+      return state.patients.filter((p) => {
+        const keyword = state.search.toLowerCase();
+        return Object.values(p).some(
+          (val) =>
+            typeof val === "string" && val.toLowerCase().includes(keyword)
+        );
+      });
+    },
+  },
 
   actions: {
     async fetchAllPatients() {
@@ -57,8 +63,39 @@ export const usePatientStore = defineStore("patient", {
       this.error = null;
 
       try {
-        const res = await axios.get("/api/patients");
+        const res = await api.get("/api/patients");
         this.patients = res.data;
+      } catch (err) {
+        this.error = err.response?.data?.message || err.message;
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    async createPatient(patientData) {
+      this.isLoading = true;
+      this.error = null;
+
+      try {
+        const res = await api.post("/api/patients", patientData);
+        if (Array.isArray(this.patients)) {
+          this.patients.push(res.data);
+        }
+      } catch (err) {
+        console.log("Create failed:", err);
+        this.error = err.response?.data?.message || err.message;
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    async deletePatient(id) {
+      this.isLoading = true;
+      this.error = null;
+
+      try {
+        await api.delete(`/api/patients/${id}`);
+        this.patients = this.patients.filter((p) => p.id !== id);
       } catch (err) {
         this.error = err.response?.data?.message || err.message;
       } finally {

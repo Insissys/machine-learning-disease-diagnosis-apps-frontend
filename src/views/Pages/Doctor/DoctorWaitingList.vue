@@ -1,6 +1,6 @@
 <template>
     <div class="p-6 bg-gray-100 min-h-screen">
-        <div class="max-w-5xl mx-auto bg-white rounded shadow-md p-6">
+        <div class="max-w-7xl mx-auto bg-white rounded shadow-md p-6">
             <h2 class="text-2xl font-bold mb-4">Patient Waiting List</h2>
             <input v-model="search" type="text" placeholder="Search patients..."
                 class="mb-4 px-4 py-2 border rounded w-full" />
