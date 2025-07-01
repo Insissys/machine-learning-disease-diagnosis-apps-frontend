@@ -1,9 +1,10 @@
-import { useAuthStore } from "@/stores";
+import { useUserStore } from "@/stores/user";
+import { getToken } from "@/utils/util";
 import HomeView from "@/views/index.vue";
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(),
   routes: [
     {
       path: "/",
@@ -11,53 +12,81 @@ const router = createRouter({
       component: HomeView,
       meta: {
         requiresAuth: true,
-        allowedRoles: ["doctor", "admin", "superadmin"],
+        allowedRoles: ["superadmin", "admin", "doctor"],
+        showInDrawer: true,
+        nameInDrawer: "Dashboard",
       },
     },
     {
       path: "/patients",
       name: "patients",
-      component: () => import("@/views/Pages/Patient/PatientList.vue"),
-      meta: { requiresAuth: true, allowedRoles: ["admin", "superadmin"] },
+      component: () => import("@/views/Pages/Patient/List.vue"),
+      meta: {
+        requiresAuth: true,
+        allowedRoles: ["superadmin", "admin"],
+        showInDrawer: true,
+        nameInDrawer: "Patients Management",
+      },
     },
     {
       path: "/patients/create",
       name: "patientsCreate",
-      component: () => import("@/views/Pages/Patient/PatientForm.vue"),
-      meta: { requiresAuth: true, allowedRoles: ["admin", "superadmin"] },
+      component: () => import("@/views/Pages/Patient/Form.vue"),
+      meta: { requiresAuth: true, allowedRoles: ["superadmin", "admin"] },
     },
     {
-      path: "/users-management",
-      name: "usersManagement",
-      component: () => import("@/views/Pages/UserManagement.vue"),
-      meta: { requiresAuth: true, allowedRoles: ["admin", "superadmin"] },
+      path: "/patients/input-symptom",
+      name: "patientsInputSymptom",
+      component: () => import("@/views/Pages/Doctor/Form.vue"),
+      meta: { requiresAuth: true, allowedRoles: ["superadmin", "doctor"] },
     },
     {
-      path: "/waiting-list",
-      name: "waitingList",
-      component: () => import("@/views/Pages/Doctor/DoctorWaitingList.vue"),
-      meta: { requiresAuth: true, allowedRoles: ["doctor"] },
+      path: "/users",
+      name: "users",
+      component: () => import("@/views/Pages/Users/List.vue"),
+      meta: {
+        requiresAuth: true,
+        allowedRoles: ["superadmin", "admin"],
+        showInDrawer: true,
+        nameInDrawer: "Users Management",
+      },
+    },
+    {
+      path: "/users/create",
+      name: "usersCreate",
+      component: () => import("@/views/Pages/Users/Form.vue"),
+      meta: {
+        requiresAuth: true,
+        allowedRoles: ["superadmin", "admin"],
+      },
+    },
+    {
+      path: "/appointment",
+      name: "appointment",
+      component: () => import("@/views/Pages/Doctor/Appointment.vue"),
+      meta: {
+        requiresAuth: true,
+        allowedRoles: ["superadmin", "doctor"],
+        showInDrawer: true,
+        nameInDrawer: "Appointment List",
+      },
     },
     {
       path: "/login",
       name: "login",
-      component: () => import("@/views/Pages/Login.vue"),
-      meta: { requiresAuth: false, layout: "none" },
-    },
-    {
-      path: "/logout",
-      component: () => import("@/views/Pages/Logout.vue"),
+      component: () => import("@/views/Pages/Auth/Login.vue"),
+      meta: { whileLoggedIn: true, requiresAuth: false, layout: "none" },
     },
     {
       path: "/register",
       name: "register",
-      component: () => import("@/views/Pages/Register.vue"),
+      component: () => import("@/views/Pages/Auth/Register.vue"),
       meta: { requiresAuth: false, layout: "none" },
     },
     {
       path: "/unauthorized",
       name: "unauthorized",
-      component: () => import("@/views/Pages/Unauthorized.vue"),
+      component: () => import("@/views/Pages/Auth/Unauthorized.vue"),
       meta: { requiresAuth: false, layout: "none" },
     },
     {
@@ -68,21 +97,31 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  const auth = useAuthStore();
+  const userStore = useUserStore();
 
   // Case 1: not logged in but route requires auth
-  if (to.meta.requiresAuth && !auth.token) {
+  if (to.meta.requiresAuth && !getToken()) {
     return next("/login");
   }
 
-  console.log(auth.user);
+  // Case 3: logged in not allowing re-login
+  if (to.meta.whileLoggedIn && getToken()) {
+    return next("/");
+  }
 
-  // Case 2: logged in but role is not allowed
-  if (
-    to.meta.allowedRoles &&
-    (!auth.user || !to.meta.allowedRoles.includes(auth.user.role))
-  ) {
-    return next("/unauthorized");
+  // Case 3: Role-based access
+  if (to.meta.allowedRoles?.length) {
+    if (!userStore.user?.role) {
+      try {
+        await userStore.fetchProfile();
+      } catch (err) {
+        return next("/login");
+      }
+    }
+
+    if (!to.meta.allowedRoles.includes(userStore.user?.role)) {
+      return next("/unauthorized");
+    }
   }
 
   next();

@@ -19,7 +19,7 @@
                         class="input input-bordered w-full" required />
                 </div>
 
-                <button class="btn btn-primary w-full" :disab:disabled="isLoading"led="isLoading">
+                <button class="btn btn-primary w-full text-base-content" :disab:disabled="isLoading" led="isLoading">
                     <span v-if="!isLoading">Login</span>
                     <span v-else class="loading loading-spinner loading-sm"></span>
                 </button>
@@ -27,9 +27,9 @@
                 <!-- link under the button -->
                 <p class="text-sm mt-4 text-center">
                     Don't have an account?
-                    <a href="/register" class="text-blue-600 hover:underline font-medium">
+                    <router-link to="/register" class="text-blue-600 hover:underline font-medium">
                         Sign up instead
-                    </a>
+                    </router-link>
                 </p>
             </form>
         </div>
@@ -49,25 +49,28 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores'
+import { useAuthStore } from '@/stores/auth'
 import Errors from '@/components/Modals/Errors.vue'
+import { useUserStore } from '@/stores/user'
 
 const email = ref('')
 const password = ref('')
 const modalRef = ref()
 const isLoading = ref(false)
-const auth = useAuthStore()
 const router = useRouter()
+const authStore = useAuthStore()
+const userStore = useUserStore()
 
 const login = async () => {
     if (isLoading.value) return
     isLoading.value = true
 
     try {
-        await auth.login(email.value, password.value)
+        await authStore.login(email.value, password.value)
+        await userStore.fetchProfile()
         router.push('/dashboard')
     } catch (err) {
-        modalRef.value.show(auth.error)
+        modalRef.value.show(err.response?.data?.message || err)
         isLoading.value = false
     }
 }

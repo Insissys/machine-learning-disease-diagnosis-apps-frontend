@@ -7,9 +7,13 @@ import tailwindcss from "@tailwindcss/vite";
 
 // https://vite.dev/config/
 export default defineConfig({
+  // vite.config.js
   server: {
     proxy: {
-      "/api": "http://localhost:8080",
+      "/api": {
+        target: "http://localhost:8080", // container port mapped to host
+        changeOrigin: true,
+      },
     },
   },
   plugins: [vue(), vueDevTools(), tailwindcss()],

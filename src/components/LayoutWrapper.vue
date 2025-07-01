@@ -1,76 +1,115 @@
 <template>
-    <div class="drawer drawer-mobile h-screen overflow-hidden">
-        <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
-        <div class="drawer-content flex flex-col">
-            <!-- Main Content -->
-            <div class="flex-1">
-                <!-- Navbar -->
-                <div class="navbar shadow-sm bg-base-300">
-                    <div class="navbar-start">
-                        <label for="my-drawer-2" class="btn btn-ghost drawer-button">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 6h16M4 12h16M4 18h7" />
-                            </svg>
+    <div class="drawer h-screen">
+        <input id="main-drawer" type="checkbox" class="drawer-toggle" />
+
+        <!-- Top Layout (Navbar + Content + Footer) -->
+        <div class="drawer-content flex flex-col h-full">
+            <!-- Sticky Navbar -->
+            <header class="navbar bg-base-200 sticky top-0 z-50 shadow-sm h-16">
+                <div class="flex-none">
+                    <label for="main-drawer" class="btn btn-square btn-ghost">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </label>
+                </div>
+                <div class="flex-1 px-2">
+                    <span class="text-lg font-bold">{{}}</span>
+                </div>
+                <div class="flex-none gap-2">
+                    <div class="dropdown dropdown-end">
+                        <label tabindex="0" class="btn btn-square btn-ghost">
+                            <font-awesome-icon :icon="['fas', 'ellipsis']" />
                         </label>
-                    </div>
-                    <div class="navbar-end">
-                        <div class="dropdown dropdown-end">
-                            <label tabindex="0" class="btn btn-square btn-ghost">
-                                <font-awesome-icon :icon="['fas', 'ellipsis']" />
-                            </label>
-                            <ul tabindex="0" class="menu dropdown-content bg-base-200 z-[1] mt-3 w-52 p-2 shadow">
-                                <li><a>Profile</a></li>
-                                <li><button @click="logout">Logout</button></li>
-                            </ul>
-                        </div>
+                        <ul tabindex="0"
+                            class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
+                            <li><a>Profile</a></li>
+                            <li><a>Settings</a></li>
+                            <li><button @click="logout">Logout</button></li>
+                        </ul>
                     </div>
                 </div>
+            </header>
 
-                <main class="flex-1 overflow-y-auto bg-gray-100">
-                    <slot />
-                </main>
-            </div>
+            <!-- Main Content Area -->
+            <main class="flex-1 overflow-y-auto bg-base-100">
+                <slot />
+            </main>
+
+            <!-- Compact Footer -->
+            <footer class="bg-base-200 border-t border-base-300 h-12 flex items-center px-4">
+                <div class="flex-1 text-sm text-base-content/70">
+                    © 2024 Clinic System v1.0
+                </div>
+                <div class="flex-none flex gap-4">
+                    <button class="btn btn-ghost btn-xs">Help</button>
+                    <button class="btn btn-ghost btn-xs">Privacy</button>
+                    <button class="btn btn-ghost btn-xs">Terms</button>
+                </div>
+            </footer>
         </div>
 
+        <!-- Drawer Sidebar -->
         <div class="drawer-side">
-            <label for="my-drawer-2" aria-label="close sidebar" class="drawer-overlay"></label>
-            <ul class="menu bg-base-300 text-base-content min-h-full w-80 p-4">
-                <div class="mb-4">
-                    <label class="text-xs font-bold uppercase opacity-60 mb-2 block">Menu</label>
-                    <div v-if="auth.user.role === 'doctor'">
-                        <li><router-link to="/waiting-list" class="font-semibold" @click="handleAddButton">Waiting
-                                List</router-link></li>
-                    </div>
-                    <div v-else>
-                        <li><router-link to="/" class="font-semibold" @click="handleAddButton">Dashboard</router-link>
+            <label for="main-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+            <aside class="bg-base-200 w-64 min-h-full flex flex-col">
+
+                <!-- Menu Content -->
+                <div class="flex-1 overflow-y-auto p-2 mt-16">
+                    <ul class="menu">
+                        <li v-for="menu in filteredMenus" :key="menu.path">
+                            <router-link :to="menu.path" class="active:bg-primary active:text-primary-content"
+                                @click="autoCloseDrawer">
+                                {{ menu.meta?.nameInDrawer }}
+                            </router-link>
                         </li>
-                        <li><router-link to="/patients" class="font-semibold"
-                                @click="handleAddButton">Patients</router-link></li>
-                        <li><router-link to="/users-management" class="font-semibold" @click="handleAddButton">User
-                                Management</router-link></li>
+                    </ul>
+                </div>
+
+                <!-- Sidebar Footer -->
+                <div class="p-2 border-t border-base-300">
+                    <div class="flex justify-between items-center text-sm px-2">
+                        <span>System Status</span>
+                        <span class="badge badge-success badge-xs">Online</span>
                     </div>
                 </div>
-            </ul>
+            </aside>
         </div>
     </div>
 </template>
 
 <script setup>
-// Layout wrapper component
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores'
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
+import { useUserStore } from '@/stores/user';
 
 const router = useRouter();
-const auth = useAuthStore();
+const authStore = useAuthStore();
+const userStore = useUserStore();
 
-const handleAddButton = () => {
-    document.getElementById('my-drawer-2').click();
-}
+// Filtered menus
+const filteredMenus = computed(() =>
+    router.getRoutes()
+        .filter(route =>
+            route.meta?.showInDrawer &&
+            route.meta?.allowedRoles?.includes(userStore.user?.role)
+        )
+);
 
-const logout = () => {
-    router.push('/logout')
-}
+// Auto-close drawer on mobile
+const autoCloseDrawer = () => {
+    document.getElementById('main-drawer').checked = false;
+};
+
+const logout = async () => {
+    try {
+        await authStore.logout();
+        router.push('/login');
+    } catch (err) {
+        console.error('Logout failed:', err);
+    }
+};
 </script>

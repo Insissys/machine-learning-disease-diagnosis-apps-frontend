@@ -1,16 +1,5 @@
-export const isEmptyObj = (obj) => {
-  for (const prop in obj) {
-    if (Object.hasOwn(obj, prop)) {
-      return false;
-    }
-  }
+export const setToken = (token) => localStorage.setItem("token", token);
 
-  return true;
-};
+export const getToken = () => localStorage.getItem("token") || null;
 
-export const isEmptyPatient = (p) => {
-  return Object.values(p).every(
-    (val) =>
-      val === "" || val === null || (Array.isArray(val) && val.length === 0)
-  );
-};
+export const clearToken = () => localStorage.removeItem("token");

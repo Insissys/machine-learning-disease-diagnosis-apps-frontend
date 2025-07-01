@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <div class="flex flex-col h-screen">
         <Navbar />
         <Drawer />
@@ -27,4 +27,4 @@ import { isEmptyPatient } from '@/utils/util';
 
 const chat = useChatStore()
 const patient = usePatientStore()
-</script>
+</script> -->

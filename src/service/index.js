@@ -1,7 +1,9 @@
+import { clearToken, getToken, setToken } from "@/utils/util";
 import axios from "axios";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
@@ -9,9 +11,9 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token") || null;
+    const token = getToken();
     if (token) {
-      config.headers.Authorization = `Bearer ${auth.token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
@@ -24,19 +26,22 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
+
       try {
-        const refreshToken = localStorage.getItem("refreshToken"); // Or your preferred storage
-        const response = await axios.post("/api/refresh-token", {
-          refreshToken,
-        }); // Your refresh token endpoint
-        const newAccessToken = response.data.accessToken;
-        localStorage.setItem("jwtToken", newAccessToken); // Update stored token
+        const response = await api.post("/auth/refresh-token");
+        const newAccessToken = response.data.token;
+
+        setToken(newAccessToken);
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-        return api(originalRequest); // Retry the original request
+
+        return api(originalRequest);
       } catch (refreshError) {
         // Handle refresh token failure (e.g., redirect to login)
+        clearToken();
+        
         return Promise.reject(refreshError);
       }
     }
