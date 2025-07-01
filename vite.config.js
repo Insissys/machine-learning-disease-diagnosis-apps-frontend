@@ -11,7 +11,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:8080", // container port mapped to host
+        target: process.env.VITE_BASE_URL,
         changeOrigin: true,
       },
     },
