@@ -4,6 +4,10 @@ FROM node:18-alpine AS builder
 # Set working directory
 WORKDIR /app
 
+# Set VITE_ env variables at build time via --build-arg
+ARG VITE_BASE_URL
+ENV VITE_BASE_URL=$VITE_BASE_URL
+
 # Copy dependencies and install
 COPY package*.json ./
 RUN npm install
