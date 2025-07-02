@@ -40,11 +40,7 @@
                             class="hover:bg-gray-50 transition-colors">
                             <td>{{ patient.medicalRecord }}</td>
                             <td>{{ patient.name }}</td>
-                            <td>
-                                <span :class="`badge ${patient.gender === 'male' ? 'badge-info' : 'badge-accent'} text-white`">
-                                    {{ patient.gender }}
-                                </span>
-                            </td>
+                            <td>{{ patient.gender.toLowerCase() }}</td>
                             <td>{{ patient.birthDate }}</td>
                             <td class="text-right">
                                 <div class="flex justify-end gap-2">

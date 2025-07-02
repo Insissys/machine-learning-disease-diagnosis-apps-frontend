@@ -46,7 +46,7 @@ export const usePatientStore = defineStore("patient", {
           this.patients.push(res.data);
         }
       } catch (err) {
-        console.log("Create failed:", err);
+        // console.log("Create failed:", err);
         this.error = err.response?.data?.message || err.message;
       } finally {
         this.isLoading = false;

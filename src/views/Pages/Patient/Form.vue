@@ -20,7 +20,7 @@
                             <span class="label-text font-medium">Medical Record Number*</span>
                         </label>
                         <input v-model="patient.medicalRecord" type="text" class="input input-bordered w-full"
-                            placeholder="Exist Medical Record" required />
+                            placeholder="Exist Medical Record" />
                         <label class="label" v-if="v$.medicalRecord.$error">
                             <span class="label-text-alt text-error">{{ v$.medicalRecord.$errors[0]?.$message }}</span>
                         </label>
@@ -32,7 +32,7 @@
                             <span class="label-text font-medium">Full Name*</span>
                         </label>
                         <input v-model="patient.name" type="text" class="input input-bordered w-full"
-                            placeholder="John Doe" required />
+                            placeholder="John Doe" />
                         <label class="label" v-if="v$.name.$error">
                             <span class="label-text-alt text-error">{{ v$.name.$errors[0]?.$message }}</span>
                         </label>
@@ -47,7 +47,7 @@
                             model-type="yyyy-MM-dd" :max-date="new Date()" :enable-time-picker="false" auto-apply
                             placeholder="Select date"
                             :input-class="`input input-bordered w-full ${v$.birthDate.$error ? 'input-error' : ''}`"
-                            :ui="{ input: '!w-full', menu: '!absolute' }" required />
+                            :ui="{ input: '!w-full', menu: '!absolute' }" />
                         <label class="label" v-if="v$.birthDate.$error">
                             <span class="label-text-alt text-error">{{ v$.birthDate.$errors[0]?.$message }}</span>
                         </label>
@@ -59,7 +59,7 @@
                             <span class="label-text font-medium">Gender*</span>
                         </label>
                         <select v-model="patient.gender" class="select select-bordered w-full"
-                            :class="{ 'select-error': v$.gender.$error }" required>
+                            :class="{ 'select-error': v$.gender.$error }">
                             <option disabled value="">Select gender</option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>

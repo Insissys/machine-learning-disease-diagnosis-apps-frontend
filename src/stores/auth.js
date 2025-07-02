@@ -1,6 +1,6 @@
 import { loginService, logoutService, registerService } from "@/service/auth";
 import { defineStore } from "pinia";
-import { useUserStore } from "./user";
+import { useProfileStore } from "./user";
 
 export const useAuthStore = defineStore("auth", {
   actions: {
@@ -8,7 +8,7 @@ export const useAuthStore = defineStore("auth", {
       try {
         await registerService(payload);
       } catch (error) {
-        console.error("Register error from store:", error);
+        // console.error("Register error from store:", error);
         throw error;
       }
     },
@@ -17,18 +17,18 @@ export const useAuthStore = defineStore("auth", {
       try {
         await loginService(email, password);
       } catch (error) {
-        console.error("Login error from store:", error);
+        // console.error("Login error from store:", error);
         throw error;
       }
     },
 
     async logout() {
       try {
-        const userStore = useUserStore();
+        const userStore = useProfileStore();
         await logoutService();
         await userStore.clearUser();
       } catch (error) {
-        console.error("Logout error from store:", error);
+        // console.error("Logout error from store:", error);
         throw error;
       }
     },

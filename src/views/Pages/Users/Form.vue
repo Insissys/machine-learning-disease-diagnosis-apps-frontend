@@ -1,6 +1,7 @@
 <template>
     <div class="p-6 bg-gray-100 min-h-screen">
         <Errors ref="modalRef" />
+        <Info ref="modalInfo" />
         <div class="max-w-12xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
             <!-- Form Header -->
             <div class="bg-primary text-white p-4">
@@ -20,7 +21,7 @@
                             <span class="label-text font-medium">Full Name*</span>
                         </label>
                         <input v-model="user.name" type="text" class="input input-bordered w-full"
-                            placeholder="John Doe" required />
+                            placeholder="John Doe" />
                         <label class="label" v-if="v$.name.$error">
                             <span class="label-text-alt text-error">{{ v$.name.$errors[0]?.$message }}</span>
                         </label>
@@ -31,8 +32,8 @@
                         <label class="label">
                             <span class="label-text font-medium">Email*</span>
                         </label>
-                        <input v-model="user.email" type="email" class="input input-bordered w-full"
-                            placeholder="user@example.com" required />
+                        <input v-model="user.email" type="text" class="input input-bordered w-full"
+                            placeholder="user@example.com" />
                         <label class="label" v-if="v$.email.$error">
                             <span class="label-text-alt text-error">{{ v$.email.$errors[0]?.$message }}</span>
                         </label>
@@ -44,7 +45,7 @@
                             <span class="label-text font-medium">Password*</span>
                         </label>
                         <input v-model="user.password" type="password" class="input input-bordered w-full"
-                            placeholder="••••••••" required />
+                            placeholder="••••••••" />
                         <label class="label" v-if="v$.password.$error">
                             <span class="label-text-alt text-error">{{ v$.password.$errors[0]?.$message }}</span>
                         </label>
@@ -56,7 +57,7 @@
                             <span class="label-text font-medium">Role*</span>
                         </label>
                         <select v-model="user.role" class="select select-bordered w-full"
-                            :class="{ 'select-error': v$.role.$error }" required>
+                            :class="{ 'select-error': v$.role.$error }">
                             <option disabled value="">Select role</option>
                             <option value="admin">Administrator</option>
                             <option value="doctor">Doctor</option>
@@ -88,20 +89,24 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useVuelidate } from '@vuelidate/core'
-import { required, email, minLength, helpers } from '@vuelidate/validators'
+import { required, email, helpers } from '@vuelidate/validators'
 import Errors from '@/components/Modals/Errors.vue'
+import Info from '@/components/Modals/Info.vue'
+import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
 const route = useRoute()
 const modalRef = ref()
+const modalInfo = ref()
 const isSubmitting = ref(false)
+const userStore = useUserStore()
 
 const user = ref({
     name: '',
     email: '',
     password: '',
     role: '',
-    status: 'active',
+    status: '',
     phone: ''
 })
 
@@ -124,4 +129,40 @@ const rules = {
 const v$ = useVuelidate(rules, user)
 
 const isEditMode = computed(() => route.name === 'edit')
+
+onMounted(async () => {
+    // if (isEditMode.value) {
+    //     try {
+    //         const userId = route.params.id
+    //         const existingPatient = await patientStore.fetchPatientById(patientId)
+    //         if (existingPatient) {
+    //             patient.value = { ...existingPatient }
+    //         }
+    //     } catch (error) {
+    //         modalRef.value.show(error.message)
+    //     }
+    // }
+})
+
+async function submitForm() {
+    const isValid = await v$.value.$validate()
+    if (!isValid) return
+
+    isSubmitting.value = true
+    try {
+        if (isEditMode.value) {
+            await userStore.updateUser(user.value)
+        } else {
+            await userStore.createUser(user.value)
+        }
+        modalInfo.value.show('User saved successfully!')
+        setTimeout(() => {
+            router.push('/users')
+        }, 1000)
+    } catch (error) {
+        modalRef.value.show(error.message || error)
+    } finally {
+        isSubmitting.value = false
+    }
+}
 </script>

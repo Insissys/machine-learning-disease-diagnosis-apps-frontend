@@ -116,7 +116,7 @@ onMounted(() => {
 
 const saveSymptom = async () => {
     if (!symptom.value.trim()) return alert('Symptom is required.')
-    console.log('Saved symptom:', symptom.value)
+    // console.log('Saved symptom:', symptom.value)
     mlResult.value = ['Possible: Flu', 'Recommendation: Rest, hydrate, consult in 3 days']
 }
 

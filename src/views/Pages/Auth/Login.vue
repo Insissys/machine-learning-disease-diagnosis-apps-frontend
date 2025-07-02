@@ -51,7 +51,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import Errors from '@/components/Modals/Errors.vue'
-import { useUserStore } from '@/stores/user'
+import { useProfileStore } from '@/stores/user'
 
 const email = ref('')
 const password = ref('')
@@ -59,7 +59,7 @@ const modalRef = ref()
 const isLoading = ref(false)
 const router = useRouter()
 const authStore = useAuthStore()
-const userStore = useUserStore()
+const userStore = useProfileStore()
 
 const login = async () => {
     if (isLoading.value) return

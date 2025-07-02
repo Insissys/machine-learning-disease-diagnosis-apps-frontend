@@ -1,4 +1,4 @@
-import { useUserStore } from "@/stores/user";
+import { useProfileStore } from "@/stores/user";
 import { getToken } from "@/utils/util";
 import HomeView from "@/views/index.vue";
 import { createRouter, createWebHashHistory } from "vue-router";
@@ -97,7 +97,7 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  const userStore = useUserStore();
+  const userStore = useProfileStore();
 
   // Case 1: not logged in but route requires auth
   if (to.meta.requiresAuth && !getToken()) {

@@ -84,11 +84,11 @@
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
-import { useUserStore } from '@/stores/user';
+import { useProfileStore } from '@/stores/user';
 
 const router = useRouter();
 const authStore = useAuthStore();
-const userStore = useUserStore();
+const userStore = useProfileStore();
 
 // Filtered menus
 const filteredMenus = computed(() =>
@@ -109,7 +109,7 @@ const logout = async () => {
         await authStore.logout();
         router.push('/login');
     } catch (err) {
-        console.error('Logout failed:', err);
+        // console.error('Logout failed:', err);
     }
 };
 </script>

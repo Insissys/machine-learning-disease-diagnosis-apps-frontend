@@ -18,7 +18,7 @@ export async function registerService(payload) {
     const res = await api.post("/auth/register", payload);
     return res.data;
   } catch (error) {
-    console.log("Registration failed:", error.response?.data || error.message);
+    // console.log("Registration failed:", error.response?.data || error.message);
     throw error;
   }
 }
@@ -27,10 +27,10 @@ export async function logoutService() {
   try {
     await api.post("/auth/logout");
   } catch (error) {
-    console.warn(
-      "Logout failed silently:",
-      error.response?.data || error.message
-    );
+    // console.warn(
+      // "Logout failed silently:",
+      // error.response?.data || error.message
+    // );
   }
   clearSession();
 }
