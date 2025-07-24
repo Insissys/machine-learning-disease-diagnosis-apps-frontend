@@ -18,6 +18,15 @@ const router = createRouter({
       },
     },
     {
+      path: "/profile",
+      name: "profile",
+      component: () => import("@/views/Pages/Profile.vue"),
+      meta: {
+        requiresAuth: true,
+        allowedRoles: ["superadmin", "admin", "doctor"],
+      },
+    },
+    {
       path: "/patients",
       name: "patients",
       component: () => import("@/views/Pages/Patient/List.vue"),
@@ -30,7 +39,7 @@ const router = createRouter({
     },
     {
       path: "/patients/create",
-      name: "patientsCreate",
+      name: "patients.create",
       component: () => import("@/views/Pages/Patient/Form.vue"),
       meta: { requiresAuth: true, allowedRoles: ["superadmin", "admin"] },
     },
@@ -39,6 +48,26 @@ const router = createRouter({
       name: "patientsInputSymptom",
       component: () => import("@/views/Pages/Doctor/Form.vue"),
       meta: { requiresAuth: true, allowedRoles: ["superadmin", "doctor"] },
+    },
+    {
+      path: "/registrations",
+      name: "registrations",
+      component: () => import("@/views/Pages/Registration/List.vue"),
+      meta: {
+        requiresAuth: true,
+        allowedRoles: ["superadmin", "admin"],
+        showInDrawer: true,
+        nameInDrawer: "Registrations",
+      },
+    },
+    {
+      path: "/registrations/create",
+      name: "registrations.create",
+      component: () => import("@/views/Pages/Registration/Form.vue"),
+      meta: {
+        requiresAuth: true,
+        allowedRoles: ["superadmin", "admin"],
+      },
     },
     {
       path: "/users",
@@ -61,14 +90,45 @@ const router = createRouter({
       },
     },
     {
-      path: "/appointment",
-      name: "appointment",
-      component: () => import("@/views/Pages/Doctor/Appointment.vue"),
+      path: "/queuing",
+      name: "doctor.queuing",
+      component: () => import("@/views/Pages/Doctor/List.vue"),
       meta: {
         requiresAuth: true,
         allowedRoles: ["superadmin", "doctor"],
         showInDrawer: true,
-        nameInDrawer: "Appointment List",
+        nameInDrawer: "Patient's Queuing",
+      },
+    },
+    {
+      path: "/medical-records",
+      name: "medicalRecords",
+      component: () => import("@/views/Pages/MedicalRecord/List.vue"),
+      meta: {
+        requiresAuth: true,
+        allowedRoles: ["superadmin", "admin", "doctor"],
+        showInDrawer: true,
+        nameInDrawer: "Medical Records",
+      },
+    },
+    // {
+    //   path: "/reports",
+    //   name: "reports",
+    //   component: () => import("@/views/Pages/Reports/Report.vue"),
+    //   meta: {
+    //     requiresAuth: true,
+    //     allowedRoles: ["superadmin", "admin"],
+    //     showInDrawer: true,
+    //     nameInDrawer: "Reports",
+    //   },
+    // },
+    {
+      path: "/help",
+      name: "help",
+      component: () => import("@/views/Pages/Footer/Help.vue"),
+      meta: {
+        requiresAuth: true,
+        allowedRoles: ["superadmin", "admin"],
       },
     },
     {

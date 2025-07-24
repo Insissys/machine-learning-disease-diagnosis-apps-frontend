@@ -27,7 +27,6 @@ export const useProfileStore = defineStore("profile", {
         const res = await fetchProfileService();
         this.user = { ...res.user };
       } catch (err) {
-        // console.error("Failed to fetch user profile", err);
         this.user = null;
       }
     },
@@ -61,7 +60,6 @@ export const useUserStore = defineStore("user", {
         const res = await fetchAllUserService();
         this.users = res.users || [];
       } catch (error) {
-        // console.error("Failed to fetch users:", error);
         throw error;
       }
     },
@@ -75,7 +73,6 @@ export const useUserStore = defineStore("user", {
           throw new Error("User not found");
         }
       } catch (error) {
-        // console.error("Failed to fetch user by ID:", error);
         throw error;
       }
     },
@@ -92,7 +89,6 @@ export const useUserStore = defineStore("user", {
       try {
         await createUserService(user);
       } catch (error) {
-        // console.error("Failed to create user:", error);
         throw error;
       }
     },
@@ -101,7 +97,6 @@ export const useUserStore = defineStore("user", {
       try {
         await activateUserService({ id, isactive: true });
       } catch (error) {
-        // console.error("Failed to activate user:", error);
         throw error;
       }
     },
@@ -110,7 +105,6 @@ export const useUserStore = defineStore("user", {
       try {
         await activateUserService({ id, isactive: false });
       } catch (error) {
-        // console.error("Failed to deactivate user:", error);
         throw error;
       }
     },

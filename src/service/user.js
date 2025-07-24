@@ -18,7 +18,6 @@ export async function fetchAllUserService() {
     const res = await api.get("/users");
     return res.data;
   } catch (error) {
-    // console.error("Fetching users failed:", error.response?.data || error.message);
     throw error;
   }
 }
@@ -28,7 +27,6 @@ export async function deleteUserService(id) {
     const res = await api.delete(`/users/${id}`);
     return res.data;
   } catch (error) {
-    // console.error("Fetching users failed:", error.response?.data || error.message);
     throw error;
   }
 }
@@ -38,7 +36,6 @@ export async function createUserService(user) {
     const res = await api.post("/users", user);
     return res.data;
   } catch (error) {
-    // console.error("Fetching users failed:", error.response?.data || error.message);
     throw error;
   }
 }
@@ -48,7 +45,6 @@ export async function activateUserService({ id, isactive }) {
     const res = await api.patch(`/users/activate/${id}`, { isactive });
     return res.data;
   } catch (error) {
-    // console.error("Fetching users failed:", error.response?.data || error.message);
     throw error;
   }
 }
