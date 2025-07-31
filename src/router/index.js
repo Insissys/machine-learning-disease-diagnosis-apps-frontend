@@ -158,6 +158,7 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const userStore = useProfileStore();
+  console.log(userStore.user);
 
   // Case 1: not logged in but route requires auth
   if (to.meta.requiresAuth && !getToken()) {

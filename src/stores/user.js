@@ -9,37 +9,23 @@ import { defineStore } from "pinia";
 
 export const useProfileStore = defineStore("profile", {
   state: () => ({
-    user: {
-      officename: "",
-      address: "",
-      name: "",
-      email: "",
-      role: "",
-      expired: "",
-    },
+    user: null,
   }),
 
   actions: {
     async fetchProfile() {
-      if (this.user.role != "") return;
+      if (this.user?.role != "") return;
 
       try {
         const res = await fetchProfileService();
-        this.user = { ...res.user };
+        this.user = { ...res.data };
       } catch (err) {
         this.user = null;
       }
     },
 
     clearUser() {
-      this.user = {
-        officename: "",
-        address: "",
-        name: "",
-        email: "",
-        role: "",
-        expired: "",
-      };
+      this.user = null;
     },
   },
 

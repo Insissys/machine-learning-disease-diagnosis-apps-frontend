@@ -5,7 +5,7 @@ import axios from "axios";
 export async function loginService(email, password) {
   try {
     const res = await axios.post("/api/auth/login", { email, password });
-    const token = res.data.token;
+    const token = res.data.data.token;
 
     setToken(token);
     api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -17,7 +17,6 @@ export async function loginService(email, password) {
 export async function registerService(payload) {
   try {
     const res = await axios.post("/api/auth/register", payload);
-    return res.data;
   } catch (error) {
     throw error;
   }
