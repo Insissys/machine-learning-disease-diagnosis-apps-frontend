@@ -4,6 +4,7 @@ import {
   deleteUserService,
   fetchAllUserService,
   fetchProfileService,
+  fetchUsersDoctorService,
 } from "@/service/user";
 import { defineStore } from "pinia";
 
@@ -14,8 +15,6 @@ export const useProfileStore = defineStore("profile", {
 
   actions: {
     async fetchProfile() {
-      if (this.user?.role != "") return;
-
       try {
         const res = await fetchProfileService();
         this.user = { ...res.data };
@@ -44,7 +43,16 @@ export const useUserStore = defineStore("user", {
     async fetchAllUsers() {
       try {
         const res = await fetchAllUserService();
-        this.users = res.users || [];
+        this.users = res.data || [];
+      } catch (error) {
+        throw error;
+      }
+    },
+
+    async fetchUsersDoctor() {
+      try {
+        const res = await fetchUsersDoctorService();
+        this.users = res.data || [];
       } catch (error) {
         throw error;
       }

@@ -22,8 +22,7 @@
                                 <label class="label">
                                     <span class="label-text font-medium">Medical Record Number</span>
                                 </label>
-                                <input v-model="patient.medicalRecord" type="text" class="input input-bordered w-full"
-                                    disabled />
+                                <input v-model="patient.medicalRecord" type="text" class="input w-full" disabled />
                             </div>
 
                             <!-- Patient Name -->
@@ -31,8 +30,7 @@
                                 <label class="label">
                                     <span class="label-text font-medium">Full Name</span>
                                 </label>
-                                <input v-model="patient.name" type="text" class="input input-bordered w-full"
-                                    disabled />
+                                <input v-model="patient.name" type="text" class="input w-full" disabled />
                             </div>
 
                             <!-- Date of Birth -->
@@ -40,8 +38,7 @@
                                 <label class="label">
                                     <span class="label-text font-medium">Date of Birth</span>
                                 </label>
-                                <input v-model="patient.birthDate" type="text" class="input input-bordered w-full"
-                                    disabled />
+                                <input v-model="patient.birthDate" type="text" class="input w-full" disabled />
                             </div>
 
                             <!-- Gender -->
@@ -49,8 +46,7 @@
                                 <label class="label">
                                     <span class="label-text font-medium">Gender</span>
                                 </label>
-                                <input v-model="patient.gender" type="text" class="input input-bordered w-full"
-                                    disabled />
+                                <input v-model="patient.gender" type="text" class="input w-full" disabled />
                             </div>
                         </div>
 
@@ -138,7 +134,7 @@
                                     <label :for="'diagnosis-' + index" class="flex-1">
                                         <span class="font-medium">{{ item.condition }}</span>
                                         <span class="text-gray-600 text-sm block">Confidence: {{ item.confidence
-                                            }}%</span>
+                                        }}%</span>
                                     </label>
                                 </div>
                             </div>
@@ -198,7 +194,7 @@
                         <div>
                             <h3 class="font-bold">{{ finalDiagnosis.condition }}</h3>
                             <div class="text-xs">Approved by Dr. {{ finalDiagnosis.doctor }} on {{ finalDiagnosis.date
-                                }}</div>
+                            }}</div>
                         </div>
                     </div>
                     <div class="mt-4">

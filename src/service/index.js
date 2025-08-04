@@ -32,7 +32,7 @@ api.interceptors.response.use(
 
       try {
         const response = await api.post("/auth/refresh-token");
-        const newAccessToken = response.data.token;
+        const newAccessToken = response.data.data.token;
 
         setToken(newAccessToken);
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;

@@ -158,7 +158,6 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const userStore = useProfileStore();
-  console.log(userStore.user);
 
   // Case 1: not logged in but route requires auth
   if (to.meta.requiresAuth && !getToken()) {
@@ -172,7 +171,7 @@ router.beforeEach(async (to, from, next) => {
 
   // Case 3: Role-based access
   if (to.meta.allowedRoles?.length) {
-    if (!userStore.user?.role) {
+    if (!userStore.user) {
       try {
         await userStore.fetchProfile();
       } catch (err) {
@@ -180,7 +179,7 @@ router.beforeEach(async (to, from, next) => {
       }
     }
 
-    if (!to.meta.allowedRoles.includes(userStore.user?.role)) {
+    if (!to.meta.allowedRoles.includes(userStore.user?.role.name)) {
       return next("/unauthorized");
     }
   }

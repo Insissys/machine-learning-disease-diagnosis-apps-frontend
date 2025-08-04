@@ -20,8 +20,7 @@
                         <label class="label">
                             <span class="label-text font-medium">Full Name*</span>
                         </label>
-                        <input v-model="user.name" type="text" class="input input-bordered w-full"
-                            placeholder="John Doe" />
+                        <input v-model="user.name" type="text" class="input w-full" placeholder="John Doe" />
                         <label class="label" v-if="v$.name.$error">
                             <span class="label-text-alt text-error">{{ v$.name.$errors[0]?.$message }}</span>
                         </label>
@@ -32,8 +31,7 @@
                         <label class="label">
                             <span class="label-text font-medium">Email*</span>
                         </label>
-                        <input v-model="user.email" type="text" class="input input-bordered w-full"
-                            placeholder="user@example.com" />
+                        <input v-model="user.email" type="text" class="input w-full" placeholder="user@example.com" />
                         <label class="label" v-if="v$.email.$error">
                             <span class="label-text-alt text-error">{{ v$.email.$errors[0]?.$message }}</span>
                         </label>
@@ -44,8 +42,7 @@
                         <label class="label">
                             <span class="label-text font-medium">Password*</span>
                         </label>
-                        <input v-model="user.password" type="password" class="input input-bordered w-full"
-                            placeholder="••••••••" />
+                        <input v-model="user.password" type="password" class="input w-full" placeholder="••••••••" />
                         <label class="label" v-if="v$.password.$error">
                             <span class="label-text-alt text-error">{{ v$.password.$errors[0]?.$message }}</span>
                         </label>
@@ -56,8 +53,7 @@
                         <label class="label">
                             <span class="label-text font-medium">Role*</span>
                         </label>
-                        <select v-model="user.role" class="select select-bordered w-full"
-                            :class="{ 'select-error': v$.role.$error }">
+                        <select v-model="user.role" class="select w-full" :class="{ 'select-error': v$.role.$error }">
                             <option disabled value="">Select role</option>
                             <option value="admin">Administrator</option>
                             <option value="doctor">Doctor</option>

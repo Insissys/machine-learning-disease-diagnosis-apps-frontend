@@ -12,8 +12,7 @@
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                     <div class="relative flex-1 sm:w-64">
-                        <input v-model="searchQuery" type="text" placeholder="Search"
-                            class="input input-bordered w-full" />
+                        <input v-model="searchQuery" type="text" placeholder="Search" class="input w-full" />
                     </div>
                     <router-link to="/users/create" class="btn btn-primary gap-2 text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
@@ -48,7 +47,7 @@
                                 </div>
                             </td>
                             <td class="font-medium">{{ user.email }}</td>
-                            <td>{{ user.role }}</td>
+                            <td>{{ user.role.name }}</td>
                             <td>
                                 <span class="badge text-white"
                                     :class="{ 'badge-primary': user.isactive, 'badge-secondary': !user.isactive }">
@@ -93,7 +92,7 @@
                             </td>
                         </tr>
                         <tr v-if="filteredUsers.length === 0">
-                            <td colspan="4" class="text-center py-8">
+                            <td colspan="5" class="text-center py-8">
                                 <div class="flex flex-col items-center justify-center gap-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
@@ -247,7 +246,7 @@ async function loadUsers() {
     try {
         await userStore.fetchAllUsers()
     } catch (error) {
-        modalRef.value.show(error)
+        modalRef.value.show(error.message)
     }
 }
 

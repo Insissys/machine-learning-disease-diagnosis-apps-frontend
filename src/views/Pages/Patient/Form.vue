@@ -1,6 +1,8 @@
 <template>
     <div class="p-6 bg-gray-100 min-h-screen">
         <Errors ref="modalRef" />
+        <Info ref="infoModal" />
+
         <div class="max-w-12xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
             <!-- Form Header -->
             <div class="bg-primary text-white p-4">
@@ -20,11 +22,11 @@
                             <label class="label">
                                 <span class="label-text font-medium">Medical Record Number*</span>
                             </label>
-                            <input v-model="patient.medicalRecord" type="text" class="input input-bordered w-full"
+                            <input v-model="patient.medical_record_number" type="text" class="input w-full"
                                 placeholder="Exist Medical Record" />
-                            <label class="label" v-if="v$.medicalRecord.$error">
-                                <span class="label-text-alt text-error">{{ v$.medicalRecord.$errors[0]?.$message
-                                    }}</span>
+                            <label class="label" v-if="v$.medical_record_number.$error">
+                                <span class="label-text-alt text-error">{{ v$.medical_record_number.$errors[0]?.$message
+                                }}</span>
                             </label>
                         </div>
 
@@ -33,8 +35,7 @@
                             <label class="label">
                                 <span class="label-text font-medium">Full Name*</span>
                             </label>
-                            <input v-model="patient.name" type="text" class="input input-bordered w-full"
-                                placeholder="John Doe" />
+                            <input v-model="patient.name" type="text" class="input w-full" placeholder="John Doe" />
                             <label class="label" v-if="v$.name.$error">
                                 <span class="label-text-alt text-error">{{ v$.name.$errors[0]?.$message }}</span>
                             </label>
@@ -45,9 +46,9 @@
                             <label class="label">
                                 <span class="label-text font-medium">Date of Birth*</span>
                             </label>
-                            <input v-model="patient.birthDate" type="date" class="input input-bordered w-full" required>
-                            <label class="label" v-if="v$.birthDate.$error">
-                                <span class="label-text-alt text-error">{{ v$.birthDate.$errors[0]?.$message }}</span>
+                            <input v-model="patient.birth_date" type="date" class="input w-full" required>
+                            <label class="label" v-if="v$.birth_date.$error">
+                                <span class="label-text-alt text-error">{{ v$.birth_date.$errors[0]?.$message }}</span>
                             </label>
                         </div>
 
@@ -56,7 +57,7 @@
                             <label class="label">
                                 <span class="label-text font-medium">Gender*</span>
                             </label>
-                            <select v-model="patient.gender" class="select select-bordered w-full"
+                            <select v-model="patient.gender" class="select w-full"
                                 :class="{ 'select-error': v$.gender.$error }">
                                 <option disabled value="">Select gender</option>
                                 <option value="Male">Male</option>
@@ -68,15 +69,15 @@
                             </label>
                         </div>
 
-                        <div class="divider md:col-span-2">Additional Fields</div>
+                        <div class="divider md:col-span-2">Additional Fields (Coming Soon)</div>
 
                         <!-- Additional Fields -->
                         <div class="form-control md:col-span-2">
                             <label class="label">
                                 <span class="label-text font-medium">Contact Information</span>
                             </label>
-                            <input v-model="patient.phone" type="tel" class="input input-bordered w-full"
-                                placeholder="Phone number" disabled />
+                            <input v-model="patient.phone" type="tel" class="input w-full" placeholder="Phone number"
+                                disabled />
                         </div>
 
                         <div class="form-control md:col-span-2">
@@ -114,24 +115,26 @@ import { usePatientStore } from '@/stores/patient'
 import { useVuelidate } from '@vuelidate/core'
 import { required, helpers } from '@vuelidate/validators'
 import Errors from '@/components/Modals/Errors.vue'
+import Info from '@/components/Modals/Info.vue'
 
 const router = useRouter()
 const route = useRoute()
 const patientStore = usePatientStore()
 const modalRef = ref()
 const isSubmitting = ref(false)
+const infoModal = ref()
 
 const patient = ref({
-    medicalRecord: '',
+    medical_record_number: '',
     name: '',
     gender: '',
-    birthDate: null,
+    birth_date: null,
     phone: '',
     address: ''
 })
 
 const rules = {
-    medicalRecord: {
+    medical_record_number: {
         required: helpers.withMessage('Medical record number is required', required)
     },
     name: {
@@ -140,7 +143,7 @@ const rules = {
     gender: {
         required: helpers.withMessage('Please select gender', required)
     },
-    birthDate: {
+    birth_date: {
         required: helpers.withMessage('Date of birth is required', required),
         validDate: helpers.withMessage(
             'Please enter a valid date',
@@ -174,15 +177,17 @@ async function submitForm() {
 
     isSubmitting.value = true
     try {
+        let success
         if (isEditMode.value) {
-            await patientStore.updatePatient(patient.value)
+            success = await patientStore.updatePatient(patient.value)
         } else {
-            await patientStore.createPatient(patient.value)
+            success = await patientStore.createPatient(patient.value)
         }
-        if (!patientStore.error) {
+        if (success) {
+            await infoModal.value.show('Patient Added Successfully')
             router.push({ name: 'patients' })
         } else {
-            modalRef.value.show(patientStore.error)
+            modalRef.value.show(patientStore.error || 'Something went wrong')
         }
     } catch (error) {
         modalRef.value.show(error.message)

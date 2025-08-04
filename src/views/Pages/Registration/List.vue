@@ -7,12 +7,13 @@
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
                 <div>
                     <h2 class="text-2xl font-bold text-gray-800">Registrations</h2>
-                    <p class="text-sm text-gray-500 mt-1">Total patients: {{ registrationStore.registrations?.length }}</p>
+                    <p class="text-sm text-gray-500 mt-1">Total registration: {{ registrationStore.registrations?.length
+                        }}</p>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                     <div class="relative flex-1 sm:w-64">
                         <input v-model="registrationStore.search" type="text" placeholder="Search"
-                            class="input input-bordered w-full" />
+                            class="input w-full" />
                     </div>
                     <router-link :to="{ name: 'registrations.create' }" class="btn btn-primary gap-2 text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
@@ -73,7 +74,11 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
-                                    <p class="text-gray-500">No patients found</p>
+                                    <p class="text-gray-500">No registrations found</p>
+                                    <router-link :to="{ name: 'registrations.create' }"
+                                        class="btn btn-primary gap-2 text-white">
+                                        Add New Registration
+                                    </router-link>
                                 </div>
                             </td>
                         </tr>
@@ -83,7 +88,8 @@
 
             <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div class="text-sm text-gray-500">
-                    Showing {{ startItem }}-{{ endItem }} of {{ registrationStore.filteredRegistrations?.length }} patients
+                    Showing {{ startItem }}-{{ endItem }} of {{ registrationStore.filteredRegistrations?.length }}
+                    registrations
                 </div>
                 <div class="join">
                     <button class="join-item btn btn-sm" :class="{ 'btn-disabled': currentPage === 1 }"

@@ -6,7 +6,7 @@
             <div class="modal-action">
                 <form method="dialog">
                     <!-- if there is a button in form, it will close the modal -->
-                    <button class="btn btn-error">Close</button>
+                    <button class="btn btn-error text-white">Close</button>
                 </form>
             </div>
         </div>

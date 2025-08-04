@@ -11,8 +11,7 @@
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                     <div class="relative flex-1 sm:w-64">
-                        <input v-model="patientStore.search" type="text" placeholder="Search"
-                            class="input input-bordered w-full" />
+                        <input v-model="patientStore.search" type="text" placeholder="Search" class="input w-full" />
                     </div>
                 </div>
             </div>
@@ -43,7 +42,7 @@
                             <td class="text-right">
                                 <div class="flex justify-end gap-2">
                                     <router-link to="/patients/input-symptom"
-                                        class="btn btn-sm btn-secondary text-white mt-2">
+                                        class="btn btn-sm btn-primary text-white mt-2">
                                         Visit
                                     </router-link>
                                 </div>

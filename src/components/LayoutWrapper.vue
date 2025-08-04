@@ -95,7 +95,7 @@ const filteredMenus = computed(() =>
     router.getRoutes()
         .filter(route =>
             route.meta?.showInDrawer &&
-            route.meta?.allowedRoles?.includes(userStore.user?.role)
+            route.meta?.allowedRoles?.includes(userStore.user?.role.name)
         )
 );
 

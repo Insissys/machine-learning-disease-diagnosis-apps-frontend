@@ -1,6 +1,7 @@
 import { clearToken, setToken } from "@/utils/util";
 import api from ".";
 import axios from "axios";
+import { useProfileStore } from "@/stores/user";
 
 export async function loginService(email, password) {
   try {
@@ -35,6 +36,8 @@ export async function logoutService() {
 }
 
 export function clearSession() {
+  const userStore = useProfileStore();
+  userStore.clearUser();
   clearToken();
   delete api.defaults.headers.common.Authorization;
 }

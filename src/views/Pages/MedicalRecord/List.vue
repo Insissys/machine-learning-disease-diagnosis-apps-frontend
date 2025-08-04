@@ -70,7 +70,7 @@
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-xl font-semibold">Clinical Visit History</h3>
                         <div class="form-control">
-                            <select v-model="visitFilter" class="select select-bordered select-sm">
+                            <select v-model="visitFilter" class="select select-sm">
                                 <option value="all">All Visits</option>
                                 <option value="lastYear">Last Year</option>
                                 <option value="last6Months">Last 6 Months</option>
@@ -240,7 +240,8 @@
                         <div class="space-y-2">
                             <p><span class="font-medium">Diagnosis:</span> {{ selectedVisit?.diagnosis }}</p>
                             <p><span class="font-medium">Treatment:</span> {{ selectedVisit?.treatment }}</p>
-                            <p><span class="font-medium">Follow-up:</span> {{ selectedVisit?.followUp || 'None Irecommended' }}</p>
+                            <p><span class="font-medium">Follow-up:</span>
+                                {{ selectedVisit?.followUp || 'None Irecommended' }}</p>
                         </div>
                     </div>
                 </div>
@@ -377,5 +378,4 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

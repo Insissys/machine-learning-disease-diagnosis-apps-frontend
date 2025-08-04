@@ -2,17 +2,17 @@
     <div class="p-6 bg-gray-100 min-h-screen">
         <Errors ref="modalRef" />
         <Delete ref="deleteModal" @confirm="confirmDelete" />
+        <Info ref="infoModal" />
 
         <div class="max-w-12xl mx-auto bg-white rounded-lg shadow-md p-6">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
                 <div>
                     <h2 class="text-2xl font-bold text-gray-800">Patient Management</h2>
-                    <p class="text-sm text-gray-500 mt-1">Total patients: {{ patientStore.patients.length }}</p>
+                    <p class="text-sm text-gray-500 mt-1">Total patients: {{ patientStore.patients?.length }}</p>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                     <div class="relative flex-1 sm:w-64">
-                        <input v-model="patientStore.search" type="text" placeholder="Search"
-                            class="input input-bordered w-full" />
+                        <input v-model="patientStore.search" type="text" placeholder="Search" class="input w-full" />
                     </div>
                     <router-link to="/patients/create" class="btn btn-primary gap-2 text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
@@ -38,7 +38,7 @@
                     <tbody>
                         <tr v-for="patient in paginatedPatients" :key="patient.id"
                             class="hover:bg-gray-50 transition-colors">
-                            <td>{{ patient.medicalRecord }}</td>
+                            <td>{{ patient.medical_record_number }}</td>
                             <td>{{ patient.name }}</td>
                             <td>
                                 <span
@@ -46,7 +46,7 @@
                                     {{ patient.gender }}
                                 </span>
                             </td>
-                            <td>{{ formatDate(patient.birthDate) }}</td>
+                            <td>{{ formatDate(patient.birth_date) }}</td>
                             <td class="text-right">
                                 <div class="flex justify-end gap-2">
                                     <router-link :to="``" class="tooltip btn btn-ghost btn-sm btn-square text-info"
@@ -57,18 +57,18 @@
                                                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                         </svg>
                                     </router-link>
-                                    <button class="tooltip btn btn-ghost btn-sm btn-square text-error"
+                                    <!-- <button class="tooltip btn btn-ghost btn-sm btn-square text-error"
                                         @click="askToDelete(patient.id)" data-tip="Delete">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                         </svg>
-                                    </button>
+                                    </button> -->
                                 </div>
                             </td>
                         </tr>
-                        <tr v-if="patientStore.filteredPatients.length === 0">
+                        <tr v-if="patientStore.filteredPatients?.length === 0">
                             <td colspan="5" class="text-center py-8">
                                 <div class="flex flex-col items-center justify-center gap-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400" fill="none"
@@ -89,7 +89,7 @@
 
             <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div class="text-sm text-gray-500">
-                    Showing {{ startItem }}-{{ endItem }} of {{ patientStore.filteredPatients.length }} patients
+                    Showing {{ startItem }}-{{ endItem }} of {{ patientStore.filteredPatients?.length }} patients
                 </div>
                 <div class="join">
                     <button class="join-item btn btn-sm" :class="{ 'btn-disabled': currentPage === 1 }"
@@ -115,6 +115,7 @@ import { ref, computed, onMounted } from 'vue'
 import { usePatientStore } from '@/stores/patient'
 import Errors from '@/components/Modals/Errors.vue'
 import Delete from '@/components/Modals/Delete.vue'
+import Info from '@/components/Modals/Info.vue'
 
 const patientStore = usePatientStore()
 const modalRef = ref()
@@ -122,6 +123,7 @@ const currentPage = ref(1)
 const itemsPerPage = 10
 const deleteModal = ref()
 const patientIdToDelete = ref(null)
+const infoModal = ref()
 
 // Computed properties
 const paginatedPatients = computed(() => {
@@ -131,7 +133,7 @@ const paginatedPatients = computed(() => {
 })
 
 const totalPages = computed(() => {
-    return Math.ceil(patientStore.filteredPatients.length / itemsPerPage)
+    return Math.ceil(patientStore.filteredPatients?.length / itemsPerPage)
 })
 
 const startItem = computed(() => {
@@ -139,7 +141,7 @@ const startItem = computed(() => {
 })
 
 const endItem = computed(() => {
-    return Math.min(currentPage.value * itemsPerPage, patientStore.filteredPatients.length)
+    return Math.min(currentPage.value * itemsPerPage, patientStore.filteredPatients?.length)
 })
 
 const visiblePages = computed(() => {
@@ -161,12 +163,12 @@ const visiblePages = computed(() => {
 
 // Methods
 async function loadPatients() {
-    if (patientStore.isLoading.value) return
+    if (patientStore.isLoading) return
 
     try {
         await patientStore.fetchAllPatients()
     } catch (err) {
-        modalRef.value.show(err)
+        modalRef.value.show(err.message)
     }
 }
 
@@ -178,11 +180,9 @@ function askToDelete(id) {
 function confirmDelete() {
     if (patientIdToDelete.value) {
         patientStore.deletePatient(patientIdToDelete.value)
-            .then(() => {
-                // Reset to first page if we deleted the last item on current page
-                if (paginatedPatients.value.length === 0 && currentPage.value > 1) {
-                    currentPage.value--
-                }
+            .then((res) => {
+                infoModal.value.show(res.data.message || 'Patient Deleted')
+                loadPatients()
             })
             .catch(err => {
                 modalRef.value.show(err)

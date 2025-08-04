@@ -30,7 +30,7 @@ export const useRegistrationStore = defineStore("registration", {
         const res = await api.get("/patient/registration");
         this.registrations = res.data.registrations;
       } catch (err) {
-        this.error = err.response?.data?.message || err.message;
+        throw err;
       } finally {
         this.isLoading = false;
       }
@@ -41,13 +41,12 @@ export const useRegistrationStore = defineStore("registration", {
       this.error = null;
 
       try {
-        const res = await api.post("/patient/registration", registrationData);
-        if (Array.isArray(this.registrations)) {
-          this.registrations.push(res.data);
-        }
+        await api.post("/patient/registration", registrationData);
+        return true;
       } catch (err) {
-        // console.log("Create failed:", err);
+        console.log("Create failed:", err);
         this.error = err.response?.data?.message || err.message;
+        return false;
       } finally {
         this.isLoading = false;
       }

@@ -28,7 +28,7 @@ export const usePatientStore = defineStore("patient", {
 
       try {
         const res = await api.get("/patients");
-        this.patients = res.data.patients;
+        this.patients = res.data.data;
       } catch (err) {
         this.error = err.response?.data?.message || err.message;
       } finally {
@@ -41,13 +41,12 @@ export const usePatientStore = defineStore("patient", {
       this.error = null;
 
       try {
-        const res = await api.post("/patients", patientData);
-        if (Array.isArray(this.patients)) {
-          this.patients.push(res.data);
-        }
+        await api.post("/patients", patientData);
+        return true;
       } catch (err) {
         // console.log("Create failed:", err);
         this.error = err.response?.data?.message || err.message;
+        return false;
       } finally {
         this.isLoading = false;
       }
@@ -58,10 +57,10 @@ export const usePatientStore = defineStore("patient", {
       this.error = null;
 
       try {
-        await api.delete(`/patients/${id}`);
-        this.patients = this.patients.filter((p) => p.id !== id);
+        const response = await api.delete(`/patients/${id}`);
+        return response;
       } catch (err) {
-        this.error = err.response?.data?.message || err.message;
+        throw err;
       } finally {
         this.isLoading = false;
       }

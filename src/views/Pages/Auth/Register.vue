@@ -18,8 +18,8 @@
 
                 <div class="mb-4">
                     <label class="block mb-1 text-sm font-medium">Office Name</label>
-                    <input v-model="officename" type="text" placeholder="Enter your office name"
-                        class="input input-bordered w-full" required />
+                    <input v-model="officename" type="text" placeholder="Enter your office name" class="input w-full"
+                        required />
                 </div>
 
                 <div class="mb-4">
@@ -30,26 +30,24 @@
 
                 <div class="mb-4">
                     <label class="block mb-1 text-sm font-medium">Name</label>
-                    <input v-model="name" type="text" placeholder="Enter your name" class="input input-bordered w-full"
-                        required />
+                    <input v-model="name" type="text" placeholder="Enter your name" class="input w-full" required />
                 </div>
 
                 <div class="mb-4">
                     <label class="block mb-1 text-sm font-medium">Email</label>
-                    <input v-model="email" type="email" placeholder="Enter your email"
-                        class="input input-bordered w-full" required />
+                    <input v-model="email" type="email" placeholder="Enter your email" class="input w-full" required />
                 </div>
 
                 <div class="mb-6">
                     <label class="block mb-1 text-sm font-medium">Password</label>
-                    <input v-model="password" type="password" placeholder="Enter your password"
-                        class="input input-bordered w-full" required />
+                    <input v-model="password" type="password" placeholder="Enter your password" class="input w-full"
+                        required />
                 </div>
 
                 <div class="mb-6">
                     <label class="block mb-1 text-sm font-medium">Confirm Password</label>
                     <input v-model="confirmpassword" type="password" placeholder="Enter your password"
-                        class="input input-bordered w-full" required />
+                        class="input w-full" required />
                 </div>
 
                 <button class="btn btn-primary w-full text-base-content" :disab:disabled="isLoading" led="isLoading">

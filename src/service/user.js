@@ -22,6 +22,19 @@ export async function fetchAllUserService() {
   }
 }
 
+export async function fetchUsersDoctorService() {
+  try {
+    const res = await api.get("/users", {
+      params: {
+        name: "doctor",
+      },
+    });
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function deleteUserService(id) {
   try {
     const res = await api.delete(`/users/${id}`);
