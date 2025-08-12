@@ -53,9 +53,9 @@ export async function createUserService(user) {
   }
 }
 
-export async function activateUserService({ id, isactive }) {
+export async function activateUserService({ id, is_active }) {
   try {
-    const res = await api.patch(`/users/activate/${id}`, { isactive });
+    const res = await api.patch(`/users/activate/${id}`, { is_active });
     return res.data;
   } catch (error) {
     throw error;

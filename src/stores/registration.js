@@ -28,7 +28,7 @@ export const useRegistrationStore = defineStore("registration", {
 
       try {
         const res = await api.get("/patient/registration");
-        this.registrations = res.data.registrations;
+        this.registrations = res.data.data;
       } catch (err) {
         throw err;
       } finally {
@@ -44,7 +44,7 @@ export const useRegistrationStore = defineStore("registration", {
         await api.post("/patient/registration", registrationData);
         return true;
       } catch (err) {
-        console.log("Create failed:", err);
+        // console.log("Create failed:", err);
         this.error = err.response?.data?.message || err.message;
         return false;
       } finally {
@@ -60,7 +60,7 @@ export const useRegistrationStore = defineStore("registration", {
         await api.delete(`/patient/registration/${id}`);
         this.registrations = this.registrations.filter((p) => p.id !== id);
       } catch (err) {
-        this.error = err.response?.data?.message || err.message;
+        throw err.response?.data?.message || err.message;
       } finally {
         this.isLoading = false;
       }

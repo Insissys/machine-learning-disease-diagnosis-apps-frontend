@@ -1,17 +1,16 @@
 <template>
     <div class="p-6 bg-gray-100 min-h-screen">
         <Errors ref="modalRef" />
-        <Delete ref="deleteModal" @confirm="confirmDelete" />
 
         <div class="max-w-12xl mx-auto bg-white rounded-lg shadow-md p-6">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-800">Appointment List</h2>
+                    <h2 class="text-2xl font-bold text-gray-800">Patient's Queuing</h2>
                     <p class="text-sm text-gray-500 mt-1">Total patients: {{ 0 }}</p>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                     <div class="relative flex-1 sm:w-64">
-                        <input v-model="patientStore.search" type="text" placeholder="Search" class="input w-full" />
+                        <input v-model="queueStore.search" type="text" placeholder="Search" class="input w-full" />
                     </div>
                 </div>
             </div>
@@ -20,36 +19,32 @@
                 <table class="table w-full">
                     <thead class="bg-gray-50">
                         <tr>
+                            <th class="w-1/6">Registration Number</th>
+                            <th class="w-1/6">Registration Date</th>
                             <th class="w-1/6">Medical Record</th>
-                            <th class="w-2/6">Patient Name</th>
-                            <th class="w-1/6">Gender</th>
+                            <th class="w-1/6">Patient Name</th>
                             <th class="w-1/6">Date of Birth</th>
                             <th class="w-1/6 text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="patient in paginatedPatients" :key="patient.id"
-                            class="hover:bg-gray-50 transition-colors">
-                            <td>{{ patient.medicalRecord }}</td>
-                            <td>{{ patient.name }}</td>
-                            <td>
-                                <span
-                                    :class="`badge ${patient.gender.toLowerCase() === 'male' ? 'badge-info' : 'badge-secondary'} text-white`">
-                                    {{ patient.gender }}
-                                </span>
-                            </td>
-                            <td>{{ patient.birthDate }}</td>
+                        <tr v-for="queue in paginatedData" :key="queue.id" class="hover:bg-gray-50 transition-colors">
+                            <td>{{ queue.registration_number }}</td>
+                            <td>{{ formatDatewithTime(queue.created_at) }}</td>
+                            <td>{{ queue.medical_record.medical_record_number }}</td>
+                            <td>{{ queue.medical_record.patient.name }}</td>
+                            <td>{{ formatDate(queue.medical_record.patient.birth_date) }}</td>
                             <td class="text-right">
                                 <div class="flex justify-end gap-2">
-                                    <router-link to="/patients/input-symptom"
+                                    <button type="button" @click="setVisited(queue)"
                                         class="btn btn-sm btn-primary text-white mt-2">
                                         Visit
-                                    </router-link>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
-                        <tr v-if="patientStore.filteredPatients.length === 0">
-                            <td colspan="5" class="text-center py-8">
+                        <tr v-if="queueStore.filteredQueue.length === 0">
+                            <td colspan="6" class="text-center py-8">
                                 <div class="flex flex-col items-center justify-center gap-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
@@ -66,7 +61,7 @@
 
             <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div class="text-sm text-gray-500">
-                    Showing {{ startItem }}-{{ endItem }} of {{ patientStore.filteredPatients.length }} patients
+                    Showing {{ startItem }}-{{ endItem }} of {{ queueStore.filteredQueue.length }} patients
                 </div>
                 <div class="join">
                     <button class="join-item btn btn-sm" :class="{ 'btn-disabled': currentPage === 1 }"
@@ -88,23 +83,31 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { usePatientStore } from '@/stores/patient'
+import { ref, computed, onMounted } from 'vue'
+import { useProfileStore } from '@/stores/user'
+import Errors from '@/components/Modals/Errors.vue';
+import { useQueueStore, useVisitedStore } from '@/stores/queue';
+import { useRouter } from 'vue-router';
 
-const patientStore = usePatientStore()
+// Stores
+const userStore = useProfileStore()
+const queueStore = useQueueStore()
+const visitedStore = useVisitedStore()
+
 const currentPage = ref(1)
 const itemsPerPage = 10
-const deleteModal = ref()
+const modalRef = ref()
+const router = useRouter()
 
 // Computed properties
-const paginatedPatients = computed(() => {
+const paginatedData = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage
     const end = start + itemsPerPage
-    return patientStore.filteredPatients.slice(start, end)
+    return queueStore.filteredQueue.slice(start, end)
 })
 
 const totalPages = computed(() => {
-    return Math.ceil(patientStore.filteredPatients.length / itemsPerPage)
+    return Math.ceil(queueStore.filteredQueue.length / itemsPerPage)
 })
 
 const startItem = computed(() => {
@@ -112,7 +115,7 @@ const startItem = computed(() => {
 })
 
 const endItem = computed(() => {
-    return Math.min(currentPage.value * itemsPerPage, patientStore.filteredPatients.length)
+    return Math.min(currentPage.value * itemsPerPage, queueStore.filteredQueue.length)
 })
 
 const visiblePages = computed(() => {
@@ -130,5 +133,43 @@ const visiblePages = computed(() => {
     }
 
     return pages
+})
+
+async function loadQueue() {
+    if (queueStore.isLoading) return
+
+    try {
+        await queueStore.fetchAllQueue(userStore.user.id)
+    } catch (err) {
+        modalRef.value.show(err.message)
+    }
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'Unknown'
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' }
+    return new Date(dateString).toLocaleDateString('en-CA', options)
+}
+
+function formatDatewithTime(dateString) {
+    if (!dateString) return 'Unknown'
+    const options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+    }
+    return new Date(dateString).toLocaleString('en-CA', options)
+}
+
+function setVisited(params) {
+    visitedStore.setVisited(params)
+    router.push({ name: "doctor.queuing.input-symptom" })
+}
+
+onMounted(() => {
+    loadQueue()
 })
 </script>

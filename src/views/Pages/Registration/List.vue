@@ -2,13 +2,14 @@
     <div class="p-6 bg-gray-100 min-h-screen">
         <Errors ref="modalRef" />
         <Delete ref="deleteModal" @confirm="confirmDelete" />
+        <Info ref="infoModal" />
 
         <div class="max-w-12xl mx-auto bg-white rounded-lg shadow-md p-6">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
                 <div>
                     <h2 class="text-2xl font-bold text-gray-800">Registrations</h2>
                     <p class="text-sm text-gray-500 mt-1">Total registration: {{ registrationStore.registrations?.length
-                        }}</p>
+                    }}</p>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                     <div class="relative flex-1 sm:w-64">
@@ -29,22 +30,24 @@
                 <table class="table w-full">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="w-1/6">Registration Number</th>
-                            <th class="w-1/6">Registration Date</th>
-                            <th class="w-1/6">Medical Record</th>
-                            <th class="w-1/6">Patient Name</th>
-                            <th class="w-1/6">Date of Birth</th>
-                            <th class="w-1/6 text-right">Actions</th>
+                            <th class="w-1/7">Registration Number</th>
+                            <th class="w-1/7">Registration Date</th>
+                            <th class="w-1/7">Medical Record</th>
+                            <th class="w-1/7">Patient Name</th>
+                            <th class="w-1/7">Date of Birth</th>
+                            <th class="w-1/7">Interrogator</th>
+                            <th class="w-1/7 text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="patient in paginatedPatients" :key="patient.id"
+                        <tr v-for="registration in paginatedRegistrations" :key="registration.id"
                             class="hover:bg-gray-50 transition-colors">
-                            <td></td>
-                            <td></td>
-                            <td>{{ patient.medicalRecord }}</td>
-                            <td>{{ patient.name }}</td>
-                            <td>{{ patient.birthDate }}</td>
+                            <td>{{ registration.registration_number }}</td>
+                            <td>{{ formatDatewithTime(registration.created_at) }}</td>
+                            <td>{{ registration.medical_record.medical_record_number }}</td>
+                            <td>{{ registration.medical_record.patient.name }}</td>
+                            <td>{{ formatDate(registration.medical_record.patient.birth_date) }}</td>
+                            <td>{{ registration.medical_record.interrogator.name }}</td>
                             <td class="text-right">
                                 <div class="flex justify-end gap-2">
                                     <router-link :to="``" class="tooltip btn btn-ghost btn-sm btn-square text-info"
@@ -56,7 +59,7 @@
                                         </svg>
                                     </router-link>
                                     <button class="tooltip btn btn-ghost btn-sm btn-square text-error"
-                                        @click="askToDelete(patient.id)" data-tip="Delete">
+                                        @click="askToDelete(registration.id)" data-tip="Delete">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -67,7 +70,7 @@
                             </td>
                         </tr>
                         <tr v-if="registrationStore.filteredRegistrations?.length === 0">
-                            <td colspan="6" class="text-center py-8">
+                            <td colspan="7" class="text-center py-8">
                                 <div class="flex flex-col items-center justify-center gap-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
@@ -114,6 +117,7 @@
 import { ref, computed, onMounted } from 'vue'
 import Errors from '@/components/Modals/Errors.vue'
 import Delete from '@/components/Modals/Delete.vue'
+import Info from '@/components/Modals/Info.vue'
 import { useRegistrationStore } from '@/stores/registration'
 
 const registrationStore = useRegistrationStore()
@@ -121,10 +125,11 @@ const modalRef = ref()
 const currentPage = ref(1)
 const itemsPerPage = 10
 const deleteModal = ref()
+const infoModal = ref()
 const patientIdToDelete = ref(null)
 
 // Computed properties
-const paginatedPatients = computed(() => {
+const paginatedRegistrations = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage
     const end = start + itemsPerPage
     return registrationStore.filteredRegistrations.slice(start, end)
@@ -172,7 +177,7 @@ async function loadRegistrations() {
 
 function askToDelete(id) {
     patientIdToDelete.value = id
-    deleteModal.value.show('Are you sure you want to delete this patient?')
+    deleteModal.value.show('Are you sure you want to delete this registration?')
 }
 
 function confirmDelete() {
@@ -180,14 +185,34 @@ function confirmDelete() {
         registrationStore.deleteRegistration(patientIdToDelete.value)
             .then(() => {
                 // Reset to first page if we deleted the last item on current page
-                if (paginatedPatients.value?.length === 0 && currentPage.value > 1) {
+                if (paginatedRegistrations.value?.length === 0 && currentPage.value > 1) {
                     currentPage.value--
                 }
+                infoModal.value.show('Registration Successfully Deleted')
             })
             .catch(err => {
                 modalRef.value.show(err)
             })
     }
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'Unknown'
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' }
+    return new Date(dateString).toLocaleDateString('en-CA', options)
+}
+
+function formatDatewithTime(dateString) {
+    if (!dateString) return 'Unknown'
+    const options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+    }
+    return new Date(dateString).toLocaleString('en-CA', options)
 }
 
 // Lifecycle hooks

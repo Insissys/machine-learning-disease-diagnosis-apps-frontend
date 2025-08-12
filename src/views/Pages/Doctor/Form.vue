@@ -1,5 +1,8 @@
 <template>
     <div class="p-6 bg-gray-100 min-h-screen">
+        <Errors ref="modalRef" />
+        <Info ref="infoModal" @callback="redirectBack" />
+
         <div class="max-w-12xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Left Column -->
             <div class="space-y-6">
@@ -22,7 +25,8 @@
                                 <label class="label">
                                     <span class="label-text font-medium">Medical Record Number</span>
                                 </label>
-                                <input v-model="patient.medicalRecord" type="text" class="input w-full" disabled />
+                                <span class="input w-full">{{ patient.medical_record.medical_record_number
+                                }}</span>
                             </div>
 
                             <!-- Patient Name -->
@@ -30,7 +34,7 @@
                                 <label class="label">
                                     <span class="label-text font-medium">Full Name</span>
                                 </label>
-                                <input v-model="patient.name" type="text" class="input w-full" disabled />
+                                <span class="input w-full">{{ patient.medical_record.patient.name }}</span>
                             </div>
 
                             <!-- Date of Birth -->
@@ -38,7 +42,8 @@
                                 <label class="label">
                                     <span class="label-text font-medium">Date of Birth</span>
                                 </label>
-                                <input v-model="patient.birthDate" type="text" class="input w-full" disabled />
+                                <span class="input w-full">{{
+                                    formatDate(patient.medical_record.patient.birth_date) }}</span>
                             </div>
 
                             <!-- Gender -->
@@ -46,7 +51,8 @@
                                 <label class="label">
                                     <span class="label-text font-medium">Gender</span>
                                 </label>
-                                <input v-model="patient.gender" type="text" class="input w-full" disabled />
+                                <span class="input w-full">{{ patient.medical_record.patient.gender
+                                    }}</span>
                             </div>
                         </div>
 
@@ -55,16 +61,28 @@
                                 <label class="label">
                                     <span class="label-text font-medium">Input Symptoms</span>
                                 </label>
-                                <textarea v-model="symptom" class="textarea textarea-bordered w-full resize-none"
-                                    placeholder="Describe symptoms..." rows="5"></textarea>
+                                <textarea v-model="symptom" class="textarea w-full resize-none mb-2" rows="5"
+                                    :disabled="prediction">
+                                </textarea>
+                                <button @click="startVoiceInput" type="button"
+                                    class="btn btn-primary sm:w-auto w-full text-white" :disabled="isListening">
+                                    <span v-if="!isListening">
+                                        Listening
+                                    </span>
+                                    <span v-else class="loading loading-spinner"></span>
+                                </button>
                             </div>
                         </div>
 
                         <!-- Form Actions -->
                         <div class="flex flex-col sm:flex-row justify-end gap-3 mt-8 pt-6">
-                            <button @click="startVoiceInput" type="button"
-                                class="btn btn-primary sm:w-auto w-full text-white">
-                                Listen
+                            <router-link :to="({ name: 'doctor.queuing' })"
+                                class="btn btn-outline btn-secondary sm:w-auto w-full mb-2">
+                                Cancel
+                            </router-link>
+                            <button type="button" @click="resetSymptom"
+                                class="btn btn-outline btn-error sm:w-auto w-full mb-2 hover:text-white">
+                                Reset
                             </button>
                             <button type="submit" class="btn btn-primary sm:w-auto w-full text-white"
                                 :disabled="isSubmitting">
@@ -76,130 +94,99 @@
                         </div>
                     </form>
                 </div>
-
-                <!-- Medical History Cards -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div class="bg-primary text-white p-4">
-                        <h2 class="text-2xl font-bold">Medical History</h2>
-                    </div>
-                    <div class="p-4 space-y-4">
-                        <div v-if="medicalHistory.length > 0">
-                            <div v-for="(history, index) in medicalHistory" :key="index"
-                                class="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                                <div class="flex justify-between items-start">
-                                    <div>
-                                        <h3 class="font-bold text-lg">{{ history.date }}</h3>
-                                        <p class="text-gray-600">{{ history.symptoms }}</p>
-                                    </div>
-                                    <span class="badge" :class="{
-                                        'badge-success': history.status === 'approved',
-                                        'badge-warning': history.status === 'pending',
-                                        'badge-error': history.status === 'rejected'
-                                    }">
-                                        {{ history.status }}
-                                    </span>
-                                </div>
-                                <div class="mt-2">
-                                    <p class="font-semibold">Diagnosis:</p>
-                                    <ul class="list-disc list-inside ml-4">
-                                        <li v-for="(diag, i) in history.diagnosis" :key="i">{{ diag }}</li>
-                                    </ul>
-                                </div>
-                                <div v-if="history.feedback" class="mt-2">
-                                    <p class="font-semibold">Doctor's Feedback:</p>
-                                    <p class="text-gray-700">{{ history.feedback }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div v-else class="text-gray-400 italic">
-                            No medical history available for this patient.
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- Right Column -->
             <div class="space-y-6">
                 <!-- ML Diagnosis Result -->
                 <div class="bg-white rounded-lg shadow-md p-6">
-                    <h2 class="text-2xl font-bold mb-4">Machine Learning Diagnosis</h2>
-                    <div v-if="mlResult">
-                        <div class="mb-4">
-                            <h3 class="font-semibold mb-2">Top 5 Possible Conditions:</h3>
-                            <div class="space-y-2">
-                                <div v-for="(item, index) in mlResult.predictions" :key="index"
-                                    class="flex items-center p-2 border rounded hover:bg-gray-50">
-                                    <input type="radio" :id="'diagnosis-' + index" v-model="selectedDiagnosis"
-                                        :value="item" class="radio radio-primary mr-3">
-                                    <label :for="'diagnosis-' + index" class="flex-1">
-                                        <span class="font-medium">{{ item.condition }}</span>
-                                        <span class="text-gray-600 text-sm block">Confidence: {{ item.confidence
-                                        }}%</span>
+                    <h2 class="text-2xl font-bold mb-4">Diagnosis</h2>
+                    <div v-if="prediction">
+                        <div v-if="!isChoosen">
+                            <div class="mb-4">
+                                <h3 class="font-semibold mb-2">Top 5 Predicted Diseases:</h3>
+                                <p class="mb-2">(select one)</p>
+                                <div class="space-y-2">
+                                    <div v-for="(item, index) in prediction.predictions" :key="index"
+                                        class="flex items-center p-2 border rounded hover:bg-gray-50">
+                                        <input type="radio" :id="'diagnosis-' + index" v-model="selectedDiagnosis"
+                                            :value="item" class="radio radio-primary mr-3" :disabled="isChoosen">
+                                        <label :for="'diagnosis-' + index" class="flex-1">
+                                            <span class="font-medium">{{ item.disease }}</span>
+                                            <span class="text-gray-600 text-sm block">
+                                                Confidence: {{ calculateConfidence(item.confidence) }}%
+                                            </span>
+                                        </label>
+                                    </div>
+
+                                    <!-- None of the above -->
+                                    <div class="flex items-center p-2 border rounded hover:bg-gray-50">
+                                        <input type="radio" id="diagnosis-none" v-model="selectedDiagnosis"
+                                            :value="{ disease: 'None of the predicted applies', confidence: 0 }"
+                                            class="radio radio-primary mr-3" :disabled="isChoosen">
+                                        <label for="diagnosis-none" class="flex-1">
+                                            <span class="font-medium">None of the predicted applies</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <h3 class="font-semibold mb-2">Symptom predicted:</h3>
+                                <ul class="list-disc list-inside ml-4">
+                                    <li v-for="(symptom, i) in prediction.symptoms" :key="i">{{ symptom }}</li>
+                                </ul>
+                            </div>
+
+                            <div class="mb-4">
+                                <h3 class="font-semibold mb-2">Doctor's Review</h3>
+                                <div class="flex space-x-3 mb-4">
+                                    <button @click="setIsChoosen" class="btn btn-primary text-white flex-1"
+                                        :disabled="isChoosen || !selectedDiagnosis">
+                                        Set Choosen Diseases
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else>
+                            <!-- Doctor Approval Section -->
+                            <div class="pt-4 mt-4" :class="!isChoosen ? 'hidden' : ''">
+                                <div class="mb-4">
+                                    <div v-if="selectedDiagnosis != null && isChoosen">
+                                        <div class="alert alert-info text-white">
+                                            {{ selectedDiagnosis.disease }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text font-medium">Feedback</span>
                                     </label>
+                                    <textarea v-model="feedback" class="textarea w-full"
+                                        placeholder="Add your feedback about predicted diseases" rows="3"
+                                        :disabled="!isChoosen">
+                                </textarea>
                                 </div>
-                            </div>
-                        </div>
 
-                        <div class="mb-4">
-                            <h3 class="font-semibold mb-2">Recommendations:</h3>
-                            <ul class="list-disc list-inside ml-4">
-                                <li v-for="(rec, i) in mlResult.recommendations" :key="i">{{ rec }}</li>
-                            </ul>
-                        </div>
-
-                        <!-- Doctor Approval Section -->
-                        <div class="border-t pt-4 mt-4">
-                            <h3 class="font-semibold mb-2">Doctor's Review</h3>
-                            <div class="flex space-x-3 mb-4">
-                                <button @click="approveDiagnosis(true)" class="btn btn-success flex-1"
-                                    :disabled="!selectedDiagnosis || approvalStatus !== null">
-                                    Approve
-                                </button>
-                                <button @click="approveDiagnosis(false)" class="btn btn-error flex-1"
-                                    :disabled="!selectedDiagnosis || approvalStatus !== null">
-                                    Reject
+                                <button @click="submitAsMedicalRecord" class="btn btn-primary mt-3 w-full text-white"
+                                    :disabled="!feedback">
+                                    <div v-if="!isSubmitting">
+                                        Submit Medical Record
+                                    </div>
+                                    <div v-else>
+                                        <span class="loading loading-spinner"></span>
+                                    </div>
                                 </button>
                             </div>
-
-                            <div v-if="approvalStatus !== null" class="mb-4">
-                                <div class="alert" :class="{
-                                    'alert-success': approvalStatus === 'approved',
-                                    'alert-error': approvalStatus === 'rejected'
-                                }">
-                                    <span>Diagnosis {{ approvalStatus }}.</span>
-                                </div>
-                            </div>
-
-                            <div class="form-control">
-                                <label class="label">
-                                    <span class="label-text font-medium">Feedback</span>
-                                </label>
-                                <textarea v-model="doctorFeedback" class="textarea textarea-bordered w-full"
-                                    placeholder="Add your feedback about the ML diagnosis..." rows="3"></textarea>
-                            </div>
-
-                            <button @click="submitFeedback" class="btn btn-primary mt-3 w-full"
-                                :disabled="!doctorFeedback || approvalStatus === null">
-                                Submit Feedback
-                            </button>
                         </div>
                     </div>
-                    <div v-else class="text-gray-400 italic">No result yet. Please input symptoms first.</div>
-                </div>
-
-                <!-- Final Diagnosis -->
-                <div v-if="finalDiagnosis" class="bg-white rounded-lg shadow-md p-6">
-                    <h2 class="text-2xl font-bold mb-4">Final Diagnosis</h2>
-                    <div class="alert alert-success">
-                        <div>
-                            <h3 class="font-bold">{{ finalDiagnosis.condition }}</h3>
-                            <div class="text-xs">Approved by Dr. {{ finalDiagnosis.doctor }} on {{ finalDiagnosis.date
-                            }}</div>
+                    <div v-else class="text-gray-400 italic">
+                        <div v-if="!isSubmitting">
+                            No result yet. Please input symptoms first.
                         </div>
-                    </div>
-                    <div class="mt-4">
-                        <h3 class="font-semibold mb-2">Doctor's Notes:</h3>
-                        <p class="text-gray-700">{{ finalDiagnosis.notes }}</p>
+                        <div v-else>
+                            <span class="loading loading-spinner"></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -208,103 +195,51 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import Errors from '@/components/Modals/Errors.vue'
+import { patchMedicalRecord } from '@/service/medicalrecord'
+import { predictDiseases } from '@/service/prediction'
+import { useVisitedStore } from '@/stores/queue'
+import { ref, onUnmounted, computed, watch } from 'vue'
+import Info from '@/components/Modals/Info.vue'
+import { useRouter } from 'vue-router'
 
-const route = useRoute()
+// Store
+const visitedStore = useVisitedStore()
+
+// Computed
+const patient = computed(() => { return visitedStore.visited })
+
 const symptom = ref('')
-const mlResult = ref(null)
-const isSubmitting = ref(false)
+const prediction = ref(null)
+
 const selectedDiagnosis = ref(null)
-const approvalStatus = ref(null)
-const doctorFeedback = ref('')
-const finalDiagnosis = ref(null)
+const feedback = ref(null)
 
-const patient = ref({
-    name: '',
-    medicalRecord: '',
-    birthDate: '',
-    gender: ''
-})
+const isSubmitting = ref(false)
+const isListening = ref(false)
+const isChoosen = ref(false)
 
-const medicalHistory = ref([
-    {
-        date: '2023-05-15',
-        symptoms: 'Fever, headache, sore throat',
-        diagnosis: ['Pharyngitis', 'Viral infection'],
-        status: 'approved',
-        feedback: 'Confirmed viral pharyngitis. Recommended symptomatic treatment.'
-    },
-    {
-        date: '2023-03-10',
-        symptoms: 'Chest pain, shortness of breath',
-        diagnosis: ['GERD', 'Musculoskeletal pain'],
-        status: 'approved',
-        feedback: 'GERD confirmed after endoscopy. Prescribed PPI.'
-    },
-    {
-        date: '2023-01-05',
-        symptoms: 'Dizziness, fatigue',
-        diagnosis: ['Anemia', 'Dehydration'],
-        status: 'rejected',
-        feedback: 'Diagnosis incorrect. Patient had orthostatic hypotension.'
-    }
-])
+const modalRef = ref()
+const infoModal = ref()
+const router = useRouter()
 
-onMounted(() => {
-    const id = route.params.id
-    // Fetch patient by ID. Replace with API call.
-    if (id === '1') {
-        patient.value = {
-            id: 1,
-            name: 'John Smith',
-            medicalRecord: 'MR001',
-            birthDate: '1990-01-01',
-            gender: 'Male'
-        }
-    } else if (id === '2') {
-        patient.value = {
-            id: 2,
-            name: 'Jane Doe',
-            medicalRecord: 'MR002',
-            birthDate: '1985-05-12',
-            gender: 'Female'
-        }
-    }
+watch(isChoosen, (newValue, oldValue) => {
+    if (newValue != oldValue) { window.scrollTo(0, 0) }
 })
 
 const submitForm = async () => {
-    if (!symptom.value.trim()) return alert('Symptom is required.')
-
+    if (!symptom.value.trim()) return modalRef.value.show('Symptom is required.')
+    reset()
     isSubmitting.value = true
-
     try {
-        // Simulate API call to ML service
-        await new Promise(resolve => setTimeout(resolve, 1500))
-
-        // Mock ML response with 5 possible conditions
-        mlResult.value = {
-            predictions: [
-                { condition: 'Influenza (Flu)', confidence: 87 },
-                { condition: 'Common Cold', confidence: 76 },
-                { condition: 'COVID-19', confidence: 65 },
-                { condition: 'Strep Throat', confidence: 58 },
-                { condition: 'Allergic Rhinitis', confidence: 42 }
-            ],
-            recommendations: [
-                'Get plenty of rest',
-                'Drink fluids to stay hydrated',
-                'Consider over-the-counter fever reducers',
-                'Monitor for difficulty breathing',
-                'Follow up in 3 days if symptoms persist'
-            ]
+        const response = await predictDiseases(symptom.value.trim())
+        prediction.value = {
+            predictions: response.data.data.predictions,
+            recommendations: response.data.data.recommendations,
+            symptoms: response.data.data.symptoms,
         }
-
-        // Reset approval state
-        selectedDiagnosis.value = null
-        approvalStatus.value = null
-        doctorFeedback.value = ''
-        finalDiagnosis.value = null
+    } catch (err) {
+        modalRef.value.show(err.response.data.message || err.message || err)
     } finally {
         isSubmitting.value = false
     }
@@ -312,59 +247,70 @@ const submitForm = async () => {
 
 const startVoiceInput = () => {
     if (!('webkitSpeechRecognition' in window)) {
-        alert('Your browser does not support voice recognition')
+        modalRef.value.show('Your browser does not support voice recognition')
         return
     }
 
     const recognition = new window.webkitSpeechRecognition()
     recognition.lang = 'id-ID'
     recognition.onresult = (event) => {
-        symptom.value = event.results[0][0].transcript
+        symptom.value += event.results[0][0].transcript
+        symptom.value += " "
+        isListening.value = false
     }
     recognition.onerror = (event) => {
-        alert('Voice recognition error: ' + event.error)
+        modalRef.value.show('Voice recognition error: ' + event.error)
+        isListening.value = false
     }
     recognition.start()
+    isListening.value = true
 }
 
-const approveDiagnosis = (isApproved) => {
-    if (!selectedDiagnosis.value) return
-
-    approvalStatus.value = isApproved ? 'approved' : 'rejected'
-}
-
-const submitFeedback = () => {
-    if (!doctorFeedback.value.trim() || approvalStatus.value === null) return
-
-    if (approvalStatus.value === 'approved') {
-        finalDiagnosis.value = {
-            condition: selectedDiagnosis.value.condition,
-            doctor: 'Smith',
-            date: new Date().toLocaleDateString(),
-            notes: doctorFeedback.value
-        }
-
-        // Add to medical history
-        medicalHistory.value.unshift({
-            date: new Date().toLocaleDateString(),
-            symptoms: symptom.value,
-            diagnosis: [selectedDiagnosis.value.condition],
-            status: 'approved',
-            feedback: doctorFeedback.value
-        })
-    } else {
-        // Add rejected diagnosis to history
-        medicalHistory.value.unshift({
-            date: new Date().toLocaleDateString(),
-            symptoms: symptom.value,
-            diagnosis: mlResult.value.predictions.map(p => p.condition),
-            status: 'rejected',
-            feedback: doctorFeedback.value
-        })
-    }
-
-    // Reset form
+const resetSymptom = () => {
     symptom.value = ''
-    mlResult.value = null
+    reset()
 }
+
+const reset = () => {
+    prediction.value = null
+    selectedDiagnosis.value = null
+    feedback.value = null
+    isChoosen.value = false
+}
+
+const calculateConfidence = (confidence) => { return Math.ceil(confidence * 100) }
+
+const setIsChoosen = () => { isChoosen.value = true }
+
+function formatDate(dateString) {
+    if (!dateString) return 'Unknown'
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' }
+    return new Date(dateString).toLocaleDateString('en-CA', options)
+}
+
+const submitAsMedicalRecord = async () => {
+    patient.value.medical_record.diagnosis = selectedDiagnosis.value.disease
+    patient.value.medical_record.predictions = JSON.stringify(prediction.value)
+    patient.value.medical_record.feedback.response = feedback.value
+    patient.value.medical_record.feedback.approved = selectedDiagnosis.value.disease !== "None of the predicted applies"
+    patient.value.medical_record.patient.birth_date = formatDate(patient.value.medical_record.patient.birth_date)
+
+    isSubmitting.value = true
+    try {
+        const response = await patchMedicalRecord(patient.value.medical_record.id, patient.value.medical_record)
+        await infoModal.value.show(response.message || 'Medical Record Updated')
+    } catch (err) {
+        modalRef.value.show(err.response.data.message || err.message || err)
+    } finally {
+        isSubmitting.value = false
+    }
+}
+
+function redirectBack() {
+    router.push({ name: 'doctor.queuing' })
+}
+
+onUnmounted(() => {
+    visitedStore.clearVisited()
+})
 </script>

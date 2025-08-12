@@ -50,19 +50,19 @@
                             <td>{{ user.role.name }}</td>
                             <td>
                                 <span class="badge text-white"
-                                    :class="{ 'badge-primary': user.isactive, 'badge-secondary': !user.isactive }">
-                                    {{ user.isactive ? 'active' : 'inactive' }}
+                                    :class="{ 'badge-primary': user.is_active, 'badge-secondary': !user.is_active }">
+                                    {{ user.is_active ? 'active' : 'inactive' }}
                                 </span>
                             </td>
                             <td class="text-right">
                                 <div class="flex justify-end gap-2">
                                     <!-- Activate/Active -->
                                     <button class="btn btn-ghost btn-sm btn-square tooltip"
-                                        @click="() => user.isactive ? deactivateUser(user.id) : activateUser(user.id)"
-                                        :data-tip="user.isactive ? 'Deactivate' : 'Activate'">
+                                        @click="() => user.is_active ? deactivateUser(user.id) : activateUser(user.id)"
+                                        :data-tip="user.is_active ? 'Deactivate' : 'Activate'">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
-                                            <path v-if="!user.isactive" stroke-linecap="round" stroke-linejoin="round"
+                                            <path v-if="!user.is_active" stroke-linecap="round" stroke-linejoin="round"
                                                 stroke-width="2" d="M5 13l4 4L19 7" />
                                             <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M6 18L18 6M6 6l12 12" />
@@ -70,7 +70,7 @@
                                     </button>
 
                                     <!-- Edit -->
-                                    <router-link :to="`/users/${user.id}/edit`"
+                                    <router-link :to="``"
                                         class="btn btn-ghost btn-sm btn-square text-info tooltip" data-tip="Edit">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">

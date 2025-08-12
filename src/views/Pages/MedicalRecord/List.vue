@@ -1,253 +1,90 @@
 <template>
     <div class="p-6 bg-gray-100 min-h-screen">
-        <div class="max-w-12xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
-            <!-- Patient Header -->
-            <div class="bg-primary text-primary-content p-6">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div>
-                        <h1 class="text-2xl font-bold">{{ patient.name }}</h1>
-                        <div class="flex flex-wrap gap-4 mt-2">
-                            <div class="badge badge-outline">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                                {{ patient.gender }}, {{ patient.age }} years
-                            </div>
-                            <div class="badge badge-outline">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                </svg>
-                                {{ patient.medicalRecord }}
-                            </div>
-                            <div class="badge badge-outline">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                                DOB: {{ formatDate(patient.birthDate) }}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex gap-2">
-                        <router-link :to="`/patients/${patient.id}/edit`" class="btn btn-sm btn-outline btn-secondary">
-                            Edit Patient
-                        </router-link>
-                        <button class="btn btn-sm btn-primary gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4v16m8-8H4" />
-                            </svg>
-                            New Visit
-                        </button>
+        <Errors ref="modalRef" />
+        <Info ref="infoModal" />
+
+        <div class="max-w-12xl mx-auto bg-white rounded-lg shadow-md p-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">Medical Records</h2>
+                    <p class="text-sm text-gray-500 mt-1">Total patients: {{ patientStore.patients?.length }}</p>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                    <div class="relative flex-1 sm:w-64">
+                        <input v-model="patientStore.search" type="text" placeholder="Search" class="input w-full" />
                     </div>
                 </div>
             </div>
 
-            <!-- Medical History Navigation -->
-            <div class="tabs tabs-boxed bg-base-200 px-4 pt-4">
-                <a class="tab" :class="{ 'tab-active': activeTab === 'visits' }" @click="activeTab = 'visits'">Clinical
-                    Visits</a>
-                <a class="tab" :class="{ 'tab-active': activeTab === 'prescriptions' }"
-                    @click="activeTab = 'prescriptions'">Prescriptions</a>
-                <a class="tab" :class="{ 'tab-active': activeTab === 'labs' }" @click="activeTab = 'labs'">Lab
-                    Results</a>
-                <a class="tab" :class="{ 'tab-active': activeTab === 'allergies' }"
-                    @click="activeTab = 'allergies'">Allergies</a>
-                <a class="tab" :class="{ 'tab-active': activeTab === 'immunizations' }"
-                    @click="activeTab = 'immunizations'">Immunizations</a>
-            </div>
-
-            <!-- Medical History Content -->
-            <div class="p-6">
-                <!-- Visits Tab -->
-                <div v-if="activeTab === 'visits'" class="space-y-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-xl font-semibold">Clinical Visit History</h3>
-                        <div class="form-control">
-                            <select v-model="visitFilter" class="select select-sm">
-                                <option value="all">All Visits</option>
-                                <option value="lastYear">Last Year</option>
-                                <option value="last6Months">Last 6 Months</option>
-                                <option value="lastMonth">Last Month</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="space-y-4">
-                        <div v-for="visit in filteredVisits" :key="visit.id" class="card bg-base-100 shadow">
-                            <div class="card-body">
-                                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                                    <div>
-                                        <h4 class="card-title">
-                                            {{ formatDate(visit.date) }} - {{ visit.reason }}
-                                            <span class="badge ml-2" :class="{
-                                                'badge-primary': visit.type === 'routine',
-                                                'badge-secondary': visit.type === 'followup',
-                                                'badge-accent': visit.type === 'emergency'
-                                            }">
-                                                {{ visit.type }}
-                                            </span>
-                                        </h4>
-                                        <p class="text-sm text-gray-500">Seen by Dr. {{ visit.doctor }}</p>
-                                    </div>
-                                    <div class="flex gap-2">
-                                        <button class="btn btn-sm btn-ghost" @click="viewVisitDetails(visit)">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                            View
-                                        </button>
-                                        <router-link :to="`/visits/${visit.id}/edit`" class="btn btn-sm btn-ghost">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                            </svg>
-                                            Edit
-                                        </router-link>
-                                    </div>
+            <div class="overflow-x-auto border rounded-lg">
+                <table class="table w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="w-1/6">Medical Record</th>
+                            <th class="w-2/6">Patient Name</th>
+                            <th class="w-1/6">Gender</th>
+                            <th class="w-1/6">Date of Birth</th>
+                            <th class="w-1/6 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="patient in paginatedPatients" :key="patient.id"
+                            class="hover:bg-gray-50 transition-colors">
+                            <td>{{ patient.medical_record_number }}</td>
+                            <td>{{ patient.name }}</td>
+                            <td>
+                                <span
+                                    :class="`badge ${patient.gender?.toLowerCase() === 'male' ? 'badge-info' : 'badge-secondary'} text-white`">
+                                    {{ patient.gender }}
+                                </span>
+                            </td>
+                            <td>{{ formatDate(patient.birth_date) }}</td>
+                            <td class="text-right">
+                                <div class="flex justify-end gap-2">
+                                    <button @click="redirectTo(patient.id)"
+                                        class="tooltip btn btn-ghost btn-sm btn-square text-info" data-tip="Info">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+                                        </svg>
+                                    </button>
                                 </div>
-                                <div class="mt-2">
-                                    <p class="text-sm"><span class="font-medium">Diagnosis:</span> {{ visit.diagnosis }}
-                                    </p>
-                                    <p class="text-sm"><span class="font-medium">Treatment:</span> {{ visit.treatment }}
-                                    </p>
+                            </td>
+                        </tr>
+                        <tr v-if="patientStore.filteredPatients?.length === 0">
+                            <td colspan="5" class="text-center py-8">
+                                <div class="flex flex-col items-center justify-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <p class="text-gray-500">No medical records found</p>
                                 </div>
-                            </div>
-                        </div>
-
-                        <div v-if="filteredVisits.length === 0" class="text-center py-8">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <p class="text-gray-500 mt-2">No visit records found</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Prescriptions Tab -->
-                <div v-if="activeTab === 'prescriptions'" class="space-y-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-xl font-semibold">Prescription History</h3>
-                        <button class="btn btn-sm btn-primary gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4v16m8-8H4" />
-                            </svg>
-                            New Prescription
-                        </button>
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="table w-full">
-                            <thead>
-                                <tr>
-                                    <th>Medication</th>
-                                    <th>Date Prescribed</th>
-                                    <th>Prescribing Doctor</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="prescription in prescriptions" :key="prescription.id">
-                                    <td>
-                                        <div class="font-medium">{{ prescription.medication }}</div>
-                                        <div class="text-sm text-gray-500">{{ prescription.dosage }}</div>
-                                    </td>
-                                    <td>{{ formatDate(prescription.date) }}</td>
-                                    <td>Dr. {{ prescription.doctor }}</td>
-                                    <td>
-                                        <span class="badge" :class="{
-                                            'badge-success': prescription.status === 'active',
-                                            'badge-warning': prescription.status === 'completed',
-                                            'badge-error': prescription.status === 'cancelled'
-                                        }">
-                                            {{ prescription.status }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-ghost btn-xs">Details</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Other Tabs Content -->
-                <div v-if="activeTab === 'labs'" class="text-center py-12">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                    </svg>
-                    <p class="text-gray-500 mt-4">Lab results will appear here</p>
-                </div>
-
-                <div v-if="activeTab === 'allergies'" class="text-center py-12">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zM12 8v4m0 4h.01" />
-                    </svg>
-                    <p class="text-gray-500 mt-4">Allergy information will appear here</p>
-                </div>
-
-                <div v-if="activeTab === 'immunizations'" class="text-center py-12">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <p class="text-gray-500 mt-4">Immunization records will appear here</p>
-                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-        </div>
 
-        <!-- Visit Details Modal -->
-        <div class="modal" :class="{ 'modal-open': showVisitModal }">
-            <div class="modal-box max-w-4xl">
-                <h3 class="font-bold text-lg">Visit Details - {{ formatDate(selectedVisit?.date) }}</h3>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                    <div>
-                        <h4 class="font-semibold mb-2">Basic Information</h4>
-                        <div class="space-y-2">
-                            <p><span class="font-medium">Visit Type:</span> {{ selectedVisit?.type }}</p>
-                            <p><span class="font-medium">Reason:</span> {{ selectedVisit?.reason }}</p>
-                            <p><span class="font-medium">Doctor:</span> Dr. {{ selectedVisit?.doctor }}</p>
-                            <p><span class="font-medium">Location:</span> {{ selectedVisit?.location || 'Main Clinic' }}
-                            </p>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h4 class="font-semibold mb-2">Clinical Notes</h4>
-                        <div class="space-y-2">
-                            <p><span class="font-medium">Diagnosis:</span> {{ selectedVisit?.diagnosis }}</p>
-                            <p><span class="font-medium">Treatment:</span> {{ selectedVisit?.treatment }}</p>
-                            <p><span class="font-medium">Follow-up:</span>
-                                {{ selectedVisit?.followUp || 'None Irecommended' }}</p>
-                        </div>
-                    </div>
+            <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="text-sm text-gray-500">
+                    Showing {{ startItem }}-{{ endItem }} of {{ patientStore.filteredPatients?.length }} patients
                 </div>
-
-                <div class="modal-action">
-                    <button class="btn" @click="showVisitModal = false">Close</button>
+                <div class="join">
+                    <button class="join-item btn btn-sm" :class="{ 'btn-disabled': currentPage === 1 }"
+                        @click="currentPage--">
+                        Previous
+                    </button>
+                    <button v-for="page in visiblePages" :key="page" class="join-item btn btn-sm"
+                        :class="{ 'btn-active': page === currentPage }" @click="currentPage = page">
+                        {{ page }}
+                    </button>
+                    <button class="join-item btn btn-sm" :class="{ 'btn-disabled': currentPage === totalPages }"
+                        @click="currentPage++">
+                        Next
+                    </button>
                 </div>
             </div>
         </div>
@@ -256,126 +93,84 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { usePatientStore } from '@/stores/patient'
+import Errors from '@/components/Modals/Errors.vue'
+import Info from '@/components/Modals/Info.vue'
+import { useRouter } from 'vue-router'
+import { useMedicalRecordsStore } from '@/stores/medicalrecords'
 
-const route = useRoute()
-const activeTab = ref('visits')
-const visitFilter = ref('all')
-const showVisitModal = ref(false)
-const selectedVisit = ref(null)
+const patientStore = usePatientStore()
+const modalRef = ref()
+const currentPage = ref(1)
+const itemsPerPage = 10
+const infoModal = ref()
+const router = useRouter()
+const medicalRecordsStore = useMedicalRecordsStore()
 
-// Sample patient data - replace with API call
-const patient = ref({
-    id: route.params.id,
-    name: 'John Smith',
-    medicalRecord: 'MRN-2023-00145',
-    gender: 'Male',
-    age: 42,
-    birthDate: '1981-05-15'
+// Computed properties
+const paginatedPatients = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage
+    const end = start + itemsPerPage
+    return patientStore.filteredPatients.slice(start, end)
 })
 
-// Sample visits data - replace with API call
-const visits = ref([
-    {
-        id: 1,
-        date: '2023-06-15',
-        type: 'followup',
-        reason: 'Hypertension check',
-        doctor: 'Sarah Johnson',
-        diagnosis: 'Controlled hypertension',
-        treatment: 'Continued current medication (Lisinopril 10mg daily)',
-        followUp: '3 months'
-    },
-    {
-        id: 2,
-        date: '2023-04-10',
-        type: 'routine',
-        reason: 'Annual physical',
-        doctor: 'Michael Chen',
-        diagnosis: 'Normal physical exam',
-        treatment: 'Recommended lifestyle modifications',
-        location: 'Downtown Clinic'
-    },
-    {
-        id: 3,
-        date: '2023-01-05',
-        type: 'emergency',
-        reason: 'Chest pain',
-        doctor: 'Lisa Park',
-        diagnosis: 'Musculoskeletal chest pain',
-        treatment: 'NSAIDs as needed, rest',
-        followUp: '1 week'
-    }
-])
-
-// Sample prescriptions data - replace with API call
-const prescriptions = ref([
-    {
-        id: 1,
-        medication: 'Lisinopril',
-        dosage: '10mg tablet, once daily',
-        date: '2023-06-15',
-        doctor: 'Sarah Johnson',
-        status: 'active'
-    },
-    {
-        id: 2,
-        medication: 'Atorvastatin',
-        dosage: '20mg tablet, once at bedtime',
-        date: '2023-04-10',
-        doctor: 'Michael Chen',
-        status: 'active'
-    },
-    {
-        id: 3,
-        medication: 'Ibuprofen',
-        dosage: '400mg as needed',
-        date: '2023-01-05',
-        doctor: 'Lisa Park',
-        status: 'completed'
-    }
-])
-
-// Filter visits based on selected time period
-const filteredVisits = computed(() => {
-    const now = new Date()
-    let cutoffDate = new Date(0) // Default to all visits
-
-    switch (visitFilter.value) {
-        case 'lastYear':
-            cutoffDate = new Date(now.setFullYear(now.getFullYear() - 1))
-            break
-        case 'last6Months':
-            cutoffDate = new Date(now.setMonth(now.getMonth() - 6))
-            break
-        case 'lastMonth':
-            cutoffDate = new Date(now.setMonth(now.getMonth() - 1))
-            break
-    }
-
-    return visits.value.filter(visit => {
-        return visitFilter.value === 'all' || new Date(visit.date) >= cutoffDate
-    }).sort((a, b) => new Date(b.date) - new Date(a.date))
+const totalPages = computed(() => {
+    return Math.ceil(patientStore.filteredPatients?.length / itemsPerPage)
 })
 
-// Format date for display
-const formatDate = (dateString) => {
-    if (!dateString) return 'N/A'
-    const options = { year: 'numeric', month: 'short', day: 'numeric' }
-    return new Date(dateString).toLocaleDateString(undefined, options)
+const startItem = computed(() => {
+    return (currentPage.value - 1) * itemsPerPage + 1
+})
+
+const endItem = computed(() => {
+    return Math.min(currentPage.value * itemsPerPage, patientStore.filteredPatients?.length)
+})
+
+const visiblePages = computed(() => {
+    const pages = []
+    const maxVisible = 5
+    let start = Math.max(1, currentPage.value - Math.floor(maxVisible / 2))
+    let end = Math.min(totalPages.value, start + maxVisible - 1)
+
+    if (end - start + 1 < maxVisible) {
+        start = Math.max(1, end - maxVisible + 1)
+    }
+
+    for (let i = start; i <= end; i++) {
+        pages.push(i)
+    }
+
+    return pages
+})
+
+// Methods
+async function loadPatients() {
+    if (patientStore.isLoading) return
+
+    try {
+        await patientStore.fetchAllPatients()
+    } catch (err) {
+        modalRef.value.show(err.message)
+    }
 }
 
-// View visit details
-const viewVisitDetails = (visit) => {
-    selectedVisit.value = visit
-    showVisitModal.value = true
+function formatDate(dateString) {
+    if (!dateString) return 'Unknown'
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' }
+    return new Date(dateString).toLocaleDateString('en-CA', options)
 }
 
-// Load patient data on mount
+async function redirectTo(id) {
+    try {
+        await medicalRecordsStore.fetchMedicalRecords(id)
+        router.push({ name: 'medicalrecords.info' })
+    } catch (error) {
+        modalRef.value.show(error)
+    }
+}
+
+// Lifecycle hooks
 onMounted(() => {
-    // In a real app, you would fetch patient data here
-    // fetchPatient(route.params.id)
+    loadPatients()
 })
 </script>
-
-<style scoped></style>

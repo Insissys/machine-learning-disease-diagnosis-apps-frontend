@@ -89,7 +89,7 @@ export const useUserStore = defineStore("user", {
 
     async activateUser(id) {
       try {
-        await activateUserService({ id, isactive: true });
+        await activateUserService({ id, is_active: true });
       } catch (error) {
         throw error;
       }
@@ -97,7 +97,7 @@ export const useUserStore = defineStore("user", {
 
     async deactivateUser(id) {
       try {
-        await activateUserService({ id, isactive: false });
+        await activateUserService({ id, is_active: false });
       } catch (error) {
         throw error;
       }

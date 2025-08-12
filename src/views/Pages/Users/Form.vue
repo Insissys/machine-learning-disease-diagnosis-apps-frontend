@@ -53,13 +53,13 @@
                         <label class="label">
                             <span class="label-text font-medium">Role*</span>
                         </label>
-                        <select v-model="user.role" class="select w-full" :class="{ 'select-error': v$.role.$error }">
+                        <select v-model="user.role.name" class="select w-full" :class="{ 'select-error': v$.role.name.$error }">
                             <option disabled value="">Select role</option>
                             <option value="admin">Administrator</option>
                             <option value="doctor">Doctor</option>
                         </select>
                         <label class="label" v-if="v$.role.$error">
-                            <span class="label-text-alt text-error">{{ v$.role.$errors[0]?.$message }}</span>
+                            <span class="label-text-alt text-error">{{ v$.role.name.$errors[0]?.$message }}</span>
                         </label>
                     </div>
                 </div>
@@ -101,9 +101,10 @@ const user = ref({
     name: '',
     email: '',
     password: '',
-    role: '',
-    status: '',
-    phone: ''
+    role: {
+        name: '',
+    },
+    is_active: false,
 })
 
 const rules = {
@@ -118,7 +119,9 @@ const rules = {
         required: helpers.withMessage('Password is required', required)
     },
     role: {
-        required: helpers.withMessage('Role is required', required)
+        name: {
+            required: helpers.withMessage('Role is required', required)
+        }
     }
 }
 

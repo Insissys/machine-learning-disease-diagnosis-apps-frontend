@@ -1,7 +1,7 @@
 <template>
     <div class="p-6 bg-gray-100 min-h-screen">
         <Errors ref="modalRef" />
-        <Info ref="infoModal" />
+        <Info ref="infoModal" @callback="redirectBack" />
 
         <div class="max-w-12xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
             <!-- Form Header -->
@@ -46,7 +46,7 @@
                             <label class="label">
                                 <span class="label-text font-medium">Date of Birth*</span>
                             </label>
-                            <input v-model="patient.birth_date" type="date" class="input w-full" required>
+                            <input v-model="patient.birth_date" type="date" class="input w-full">
                             <label class="label" v-if="v$.birth_date.$error">
                                 <span class="label-text-alt text-error">{{ v$.birth_date.$errors[0]?.$message }}</span>
                             </label>
@@ -185,7 +185,6 @@ async function submitForm() {
         }
         if (success) {
             await infoModal.value.show('Patient Added Successfully')
-            router.push({ name: 'patients' })
         } else {
             modalRef.value.show(patientStore.error || 'Something went wrong')
         }
@@ -194,6 +193,10 @@ async function submitForm() {
     } finally {
         isSubmitting.value = false
     }
+}
+
+function redirectBack() {
+    router.push({ name: 'patients' })
 }
 </script>
 

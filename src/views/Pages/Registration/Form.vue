@@ -1,6 +1,6 @@
 <template>
     <div class="p-6 bg-gray-100 min-h-screen">
-        <Info ref="infoModal" />
+        <Info ref="infoModal" @callback="redirectBack"/>
 
         <div class="max-w-12xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
             <!-- Header -->
@@ -163,7 +163,7 @@
                                             <option :value="user.id">{{ user.name }}</option>
                                         </div>
                                     </select>
-                                    <button class="btn btn-primary text-white" @click="loadUsers">
+                                    <button type="button" class="btn btn-primary text-white" @click="loadUsers">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -324,11 +324,9 @@ const resetPatientForm = () => {
     patientSelected.value = false
     registration.value = {
         medical_record: {
-            id: '',
             medical_record_number: '',
             patient: {
                 id: '',
-                medical_record_number: '',
                 name: '',
                 gender: '',
                 birth_date: null,
@@ -352,7 +350,6 @@ function selectPatient(patient) {
             medical_record_number: patient.medical_record_number,
             patient: {
                 id: patient.id,
-                medical_record_number: patient.medical_record_number,
                 name: patient.name,
                 gender: patient.gender,
                 birth_date: formatDate(patient.birth_date),
@@ -389,7 +386,6 @@ async function savePatient() {
         }
         if (success) {
             await infoModal.value.show('Registration Added Successfully')
-            router.push({ name: 'registrations' })
         } else {
             modalRef.value.show(RegistrationStore.error || 'Something went wrong')
         }
@@ -399,6 +395,10 @@ async function savePatient() {
     } finally {
         isSubmitting.value = false
     }
+}
+
+function redirectBack() {
+    router.push({ name: 'registrations' })
 }
 
 // Lifecycle hooks

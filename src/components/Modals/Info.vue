@@ -6,7 +6,7 @@
             <div class="modal-action">
                 <form method="dialog">
                     <!-- if there is a button in form, it will close the modal -->
-                    <button class="btn btn-primary text-white">Close</button>
+                    <button class="btn btn-primary text-white" @click="close">Close</button>
                 </form>
             </div>
         </div>
@@ -18,15 +18,17 @@ import { ref, defineExpose } from 'vue'
 
 const dialogRef = ref(null)
 const message = ref('')
+const emit = defineEmits(['callback'])
 
 function show(msg) {
     message.value = msg
     dialogRef.value?.showModal()
 }
 
-// function close() {
-//     visible.value = false
-// }
+function close() {
+    emit('callback')
+    dialogRef.value?.close()
+}
 
 defineExpose({ show }) // expose for parent to call
 </script>

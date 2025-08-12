@@ -50,7 +50,7 @@
                         class="input w-full" required />
                 </div>
 
-                <button class="btn btn-primary w-full text-base-content" :disab:disabled="isLoading" led="isLoading">
+                <button class="btn btn-primary w-full text-white" :disab:disabled="isLoading" led="isLoading">
                     <span v-if="!isLoading">Submit</span>
                     <span v-else class="loading loading-spinner loading-sm"></span>
                 </button>

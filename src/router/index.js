@@ -44,12 +44,6 @@ const router = createRouter({
       meta: { requiresAuth: true, allowedRoles: ["superadmin", "admin"] },
     },
     {
-      path: "/patients/input-symptom",
-      name: "patientsInputSymptom",
-      component: () => import("@/views/Pages/Doctor/Form.vue"),
-      meta: { requiresAuth: true, allowedRoles: ["superadmin", "doctor"] },
-    },
-    {
       path: "/registrations",
       name: "registrations",
       component: () => import("@/views/Pages/Registration/List.vue"),
@@ -57,33 +51,13 @@ const router = createRouter({
         requiresAuth: true,
         allowedRoles: ["superadmin", "admin"],
         showInDrawer: true,
-        nameInDrawer: "Registrations",
+        nameInDrawer: "Registrations Management",
       },
     },
     {
       path: "/registrations/create",
       name: "registrations.create",
       component: () => import("@/views/Pages/Registration/Form.vue"),
-      meta: {
-        requiresAuth: true,
-        allowedRoles: ["superadmin", "admin"],
-      },
-    },
-    {
-      path: "/users",
-      name: "users",
-      component: () => import("@/views/Pages/Users/List.vue"),
-      meta: {
-        requiresAuth: true,
-        allowedRoles: ["superadmin", "admin"],
-        showInDrawer: true,
-        nameInDrawer: "Users Management",
-      },
-    },
-    {
-      path: "/users/create",
-      name: "usersCreate",
-      component: () => import("@/views/Pages/Users/Form.vue"),
       meta: {
         requiresAuth: true,
         allowedRoles: ["superadmin", "admin"],
@@ -101,14 +75,49 @@ const router = createRouter({
       },
     },
     {
+      path: "/queuing/input-symptom",
+      name: "doctor.queuing.input-symptom",
+      component: () => import("@/views/Pages/Doctor/Form.vue"),
+      meta: { requiresAuth: true, allowedRoles: ["superadmin", "doctor"] },
+    },
+    {
       path: "/medical-records",
-      name: "medicalRecords",
+      name: "medicalrecords",
       component: () => import("@/views/Pages/MedicalRecord/List.vue"),
       meta: {
         requiresAuth: true,
         allowedRoles: ["superadmin", "admin", "doctor"],
         showInDrawer: true,
         nameInDrawer: "Medical Records",
+      },
+    },
+    {
+      path: "/medical-records/info",
+      name: "medicalrecords.info",
+      component: () => import("@/views/Pages/MedicalRecord/Form.vue"),
+      meta: {
+        requiresAuth: true,
+        allowedRoles: ["superadmin", "admin", "doctor"],
+      },
+    },
+    {
+      path: "/users",
+      name: "users",
+      component: () => import("@/views/Pages/Users/List.vue"),
+      meta: {
+        requiresAuth: true,
+        allowedRoles: ["superadmin", "admin"],
+        showInDrawer: true,
+        nameInDrawer: "Users Management",
+      },
+    },
+    {
+      path: "/users/create",
+      name: "users.create",
+      component: () => import("@/views/Pages/Users/Form.vue"),
+      meta: {
+        requiresAuth: true,
+        allowedRoles: ["superadmin", "admin"],
       },
     },
     // {

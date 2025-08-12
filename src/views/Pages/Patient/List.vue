@@ -1,7 +1,7 @@
 <template>
     <div class="p-6 bg-gray-100 min-h-screen">
         <Errors ref="modalRef" />
-        <Delete ref="deleteModal" @confirm="confirmDelete" />
+        <!-- <Delete ref="deleteModal" @confirm="confirmDelete" /> -->
         <Info ref="infoModal" />
 
         <div class="max-w-12xl mx-auto bg-white rounded-lg shadow-md p-6">
@@ -114,7 +114,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { usePatientStore } from '@/stores/patient'
 import Errors from '@/components/Modals/Errors.vue'
-import Delete from '@/components/Modals/Delete.vue'
+// import Delete from '@/components/Modals/Delete.vue'
 import Info from '@/components/Modals/Info.vue'
 
 const patientStore = usePatientStore()
@@ -172,23 +172,23 @@ async function loadPatients() {
     }
 }
 
-function askToDelete(id) {
-    patientIdToDelete.value = id
-    deleteModal.value.show('Are you sure you want to delete this patient?')
-}
+// function askToDelete(id) {
+//     patientIdToDelete.value = id
+//     deleteModal.value.show('Are you sure you want to delete this patient?')
+// }
 
-function confirmDelete() {
-    if (patientIdToDelete.value) {
-        patientStore.deletePatient(patientIdToDelete.value)
-            .then((res) => {
-                infoModal.value.show(res.data.message || 'Patient Deleted')
-                loadPatients()
-            })
-            .catch(err => {
-                modalRef.value.show(err)
-            })
-    }
-}
+// function confirmDelete() {
+//     if (patientIdToDelete.value) {
+//         patientStore.deletePatient(patientIdToDelete.value)
+//             .then((res) => {
+//                 infoModal.value.show(res.data.message || 'Patient Deleted')
+//                 loadPatients()
+//             })
+//             .catch(err => {
+//                 modalRef.value.show(err)
+//             })
+//     }
+// }
 
 function formatDate(dateString) {
     if (!dateString) return 'Unknown'

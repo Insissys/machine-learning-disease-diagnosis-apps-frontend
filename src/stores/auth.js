@@ -24,15 +24,11 @@ export const useAuthStore = defineStore("auth", {
 
     async logout() {
       try {
-        const userStore = useProfileStore();
         await logoutService();
-        await userStore.clearUser();
       } catch (error) {
         // console.error("Logout error from store:", error);
         throw error;
       }
     },
-
-    async refresh_token() {},
   },
 });
