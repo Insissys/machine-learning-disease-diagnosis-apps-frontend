@@ -127,13 +127,17 @@
                                             </h3>
 
                                             <!-- Status Badge -->
-                                            <span v-if="record.feedback?.approved !== undefined"
+                                            <span v-if="record.feedback?.approved"
                                                 class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
                                                 :class="{
                                                     'bg-green-100 text-green-800': record.feedback.approved,
-                                                    'bg-yellow-100 text-yellow-800': !record.feedback.approved
+                                                    'bg-red-100 text-red-800': !record.feedback.approved
                                                 }">
-                                                {{ record.feedback.approved ? 'Approved' : 'Pending Review' }}
+                                                {{ record.feedback.approved ? 'Approved' : 'Reject' }}
+                                            </span>
+                                            <span v-else
+                                                class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                Pending Review
                                             </span>
                                         </div>
 

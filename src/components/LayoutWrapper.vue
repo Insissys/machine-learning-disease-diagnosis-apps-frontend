@@ -25,8 +25,8 @@
                         </label>
                         <ul tabindex="0"
                             class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
-                            <li><router-link to="/profile">Profile</router-link></li>
-                            <li><router-link to="/settings">Settings</router-link></li>
+                            <!-- <li><router-link to="/profile">Profile</router-link></li> -->
+                            <!-- <li><router-link to="/settings">Settings</router-link></li> -->
                             <li><button @click="logout">Logout</button></li>
                         </ul>
                     </div>

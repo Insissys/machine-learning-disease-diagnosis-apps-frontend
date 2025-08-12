@@ -11,13 +11,21 @@ export const useQueueStore = defineStore("queue", {
 
   getters: {
     filteredQueue: (state) => {
-      return state.queue.filter((p) => {
-        const keyword = state.search.toLowerCase();
-        return Object.values(p).some(
-          (val) =>
-            typeof val === "string" && val.toLowerCase().includes(keyword)
-        );
-      });
+      const keyword = state.search.toLowerCase();
+
+      const searchInObject = (obj) => {
+        return Object.values(obj).some((val) => {
+          if (typeof val === "string") {
+            return val.toLowerCase().includes(keyword);
+          }
+          if (val && typeof val === "object") {
+            return searchInObject(val);
+          }
+          return false;
+        });
+      };
+
+      return state.queue.filter((p) => searchInObject(p));
     },
   },
 
