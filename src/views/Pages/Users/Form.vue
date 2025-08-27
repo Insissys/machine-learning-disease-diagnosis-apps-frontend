@@ -4,7 +4,7 @@
         <Info ref="modalInfo" />
         <div class="max-w-12xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
             <!-- Form Header -->
-            <div class="bg-primary text-white p-4">
+            <div class="bg-red-500 text-white p-4">
                 <h2 class="text-2xl font-bold">
                     {{ isEditMode ? 'Edit User' : 'Create New User' }}
                 </h2>
@@ -69,7 +69,7 @@
                     <router-link to="/users" class="btn btn-outline btn-secondary sm:w-auto w-full">
                         Cancel
                     </router-link>
-                    <button type="submit" class="btn btn-primary sm:w-auto w-full text-white" :disabled="isSubmitting">
+                    <button type="submit" class="btn bg-red-500 sm:w-auto w-full text-white" :disabled="isSubmitting">
                         <span v-if="!isSubmitting">
                             {{ isEditMode ? 'Update User' : 'Create User' }}
                         </span>

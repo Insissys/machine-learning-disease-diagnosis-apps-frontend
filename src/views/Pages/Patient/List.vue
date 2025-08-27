@@ -14,7 +14,7 @@
                     <div class="relative flex-1 sm:w-64">
                         <input v-model="patientStore.search" type="text" placeholder="Search" class="input w-full" />
                     </div>
-                    <router-link to="/patients/create" class="btn btn-primary gap-2 text-white">
+                    <router-link to="/patients/create" class="btn bg-red-500 gap-2 text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -77,7 +77,7 @@
                                             d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                     <p class="text-gray-500">No patients found</p>
-                                    <router-link to="/patients/create" class="btn btn-sm btn-primary mt-2 text-white">
+                                    <router-link to="/patients/create" class="btn btn-sm bg-red-500 mt-2 text-white">
                                         Add New Patient
                                     </router-link>
                                 </div>

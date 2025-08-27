@@ -41,7 +41,7 @@
             <!-- Compact Footer -->
             <footer class="bg-base-200 border-t border-base-300 h-12 flex items-center px-4">
                 <div class="flex-1 text-sm text-base-content/70">
-                    © 2025 Duck Developer
+                    © 2025 CODE.ID
                 </div>
                 <div class="flex-none flex gap-4">
                     <router-link to="/help" class="btn btn-ghost btn-xs">Help</router-link>
@@ -60,7 +60,7 @@
                 <div class="flex-1 overflow-y-auto p-2 mt-16">
                     <ul class="menu">
                         <li v-for="menu in filteredMenus" :key="menu.path">
-                            <router-link :to="menu.path" class="active:bg-primary active:text-primary-content"
+                            <router-link :to="menu.path" class="active:bg-red-500 active:text-primary-content"
                                 @click="autoCloseDrawer">
                                 {{ menu.meta?.nameInDrawer }}
                             </router-link>

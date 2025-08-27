@@ -2,7 +2,7 @@
     <div class="p-6 bg-gray-100 min-h-screen">
         <div class="max-w-12xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
             <!-- Header -->
-            <div class="bg-primary text-white p-4">
+            <div class="bg-red-500 text-white p-4">
                 <h1 class="text-3xl font-bold">System Help Guide</h1>
                 <p class="opacity-90">Learn how to use the Medical Diagnosis Assistant</p>
             </div>
@@ -30,7 +30,7 @@
                     <div class="space-y-4">
                         <div class="flex items-start">
                             <div
-                                class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
+                                class="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
                                 1</div>
                             <div>
                                 <h3 class="font-bold text-lg">Creating a New Patient</h3>
@@ -43,7 +43,7 @@
 
                         <div class="flex items-start">
                             <div
-                                class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
+                                class="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
                                 2</div>
                             <div>
                                 <h3 class="font-bold text-lg">Patient Registration</h3>
@@ -68,7 +68,7 @@
                     <div class="space-y-4">
                         <div class="flex items-start">
                             <div
-                                class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
+                                class="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
                                 1</div>
                             <div>
                                 <h3 class="font-bold text-lg">Accessing Patient Record</h3>
@@ -80,7 +80,7 @@
 
                         <div class="flex items-start">
                             <div
-                                class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
+                                class="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
                                 2</div>
                             <div>
                                 <h3 class="font-bold text-lg">Inputting Symptoms</h3>
@@ -95,7 +95,7 @@
 
                         <div class="flex items-start">
                             <div
-                                class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
+                                class="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
                                 3</div>
                             <div>
                                 <h3 class="font-bold text-lg">ML-Assisted Diagnosis</h3>
@@ -109,7 +109,7 @@
 
                         <div class="flex items-start">
                             <div
-                                class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
+                                class="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
                                 4</div>
                             <div>
                                 <h3 class="font-bold text-lg">Doctor Review</h3>
@@ -137,7 +137,7 @@
                     <div class="space-y-4">
                         <div class="flex items-start">
                             <div
-                                class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
+                                class="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
                                 1</div>
                             <div>
                                 <h3 class="font-bold text-lg">Viewing Medical History</h3>
@@ -153,7 +153,7 @@
 
                         <div class="flex items-start">
                             <div
-                                class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
+                                class="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 mt-1 flex-shrink-0">
                                 2</div>
                             <div>
                                 <h3 class="font-bold text-lg">Exporting Reports</h3>

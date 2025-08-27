@@ -9,7 +9,7 @@
                 <!-- Symptoms Input Form -->
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
                     <!-- Form Header -->
-                    <div class="bg-primary text-white p-4">
+                    <div class="bg-red-500 text-white p-4">
                         <h2 class="text-2xl font-bold">
                             Symptoms Input
                         </h2>
@@ -65,7 +65,7 @@
                                     :disabled="prediction">
                                 </textarea>
                                 <button @click="startVoiceInput" type="button"
-                                    class="btn btn-primary sm:w-auto w-full text-white" :disabled="isListening">
+                                    class="btn bg-red-500 sm:w-auto w-full text-white" :disabled="isListening">
                                     <span v-if="!isListening">
                                         Listening
                                     </span>
@@ -84,7 +84,7 @@
                                 class="btn btn-outline btn-error sm:w-auto w-full mb-2 hover:text-white">
                                 Reset
                             </button>
-                            <button type="submit" class="btn btn-primary sm:w-auto w-full text-white"
+                            <button type="submit" class="btn bg-red-500 sm:w-auto w-full text-white"
                                 :disabled="isSubmitting">
                                 <span v-if="!isSubmitting">
                                     Submit
@@ -141,7 +141,7 @@
                             <div class="mb-4">
                                 <h3 class="font-semibold mb-2">Doctor's Review</h3>
                                 <div class="flex space-x-3 mb-4">
-                                    <button @click="setIsChoosen" class="btn btn-primary text-white flex-1"
+                                    <button @click="setIsChoosen" class="btn bg-red-500 text-white flex-1"
                                         :disabled="isChoosen || !selectedDiagnosis">
                                         Set Choosen Diseases
                                     </button>
@@ -168,7 +168,7 @@
                                 </textarea>
                                 </div>
 
-                                <button @click="submitAsMedicalRecord" class="btn btn-primary mt-3 w-full text-white"
+                                <button @click="submitAsMedicalRecord" class="btn bg-red-500 mt-3 w-full text-white"
                                     :disabled="!feedback">
                                     <div v-if="!isSubmitting">
                                         Submit Medical Record

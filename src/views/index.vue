@@ -98,7 +98,7 @@
                             </table>
                         </div>
                         <div :hidden="userStore.user?.role.name !== 'doctor'" class="card-actions justify-end mt-4">
-                            <router-link :to="{ name: 'doctor.queuing' }" class="btn btn-primary text-white">
+                            <router-link :to="{ name: 'doctor.queuing' }" class="btn bg-red-500 text-white">
                                 View All Appointments
                             </router-link>
                         </div>
@@ -113,7 +113,7 @@
                     <div class="card-body">
                         <h2 class="card-title text-xl">Quick Actions</h2>
                         <div class="grid md:grid-cols-2 gap-4">
-                            <router-link :to="{ name: 'patients.create' }" class="btn btn-primary text-white">
+                            <router-link :to="{ name: 'patients.create' }" class="btn bg-red-500 text-white">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

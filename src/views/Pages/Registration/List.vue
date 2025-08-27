@@ -16,7 +16,7 @@
                         <input v-model="registrationStore.search" type="text" placeholder="Search"
                             class="input w-full" />
                     </div>
-                    <router-link :to="{ name: 'registrations.create' }" class="btn btn-primary gap-2 text-white">
+                    <router-link :to="{ name: 'registrations.create' }" class="btn bg-red-500 gap-2 text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -71,7 +71,7 @@
                                     </svg>
                                     <p class="text-gray-500">No registrations found</p>
                                     <router-link :to="{ name: 'registrations.create' }"
-                                        class="btn btn-primary gap-2 text-white">
+                                        class="btn bg-red-500 gap-2 text-white">
                                         Add New Registration
                                     </router-link>
                                 </div>

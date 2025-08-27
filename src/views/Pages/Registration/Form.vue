@@ -4,7 +4,7 @@
 
         <div class="max-w-12xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
             <!-- Header -->
-            <div class="bg-primary text-white p-4">
+            <div class="bg-red-500 text-white p-4">
                 <h2 class="text-2xl font-bold">Patient Registration</h2>
                 <p class="text-sm opacity-90">Register new patients for doctor visits</p>
             </div>
@@ -58,7 +58,7 @@
                                     <td>{{ formatDate(patient.birth_date) }}</td>
                                     <td class="text-right">
                                         <button @click="selectPatient(patient)"
-                                            class="btn btn-sm btn-primary text-white mt-2">Register</button>
+                                            class="btn btn-sm bg-red-500 text-white mt-2">Register</button>
                                     </td>
                                 </tr>
                                 <tr v-if="patientStore.filteredPatients.length === 0">
@@ -163,7 +163,7 @@
                                             <option :value="user.id">{{ user.name }}</option>
                                         </div>
                                     </select>
-                                    <button type="button" class="btn btn-primary text-white" @click="loadUsers">
+                                    <button type="button" class="btn bg-red-500 text-white" @click="loadUsers">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -209,7 +209,7 @@
                                 class="btn btn-outline btn-error sm:w-auto w-full mb-2 hover:text-white">
                                 Reset
                             </button>
-                            <button type="submit" class="btn btn-primary text-white sm:w-auto w-full mb-2">
+                            <button type="submit" class="btn bg-red-500 text-white sm:w-auto w-full mb-2">
                                 {{ editingPatient ? 'Update' : 'Save' }} Registration
                             </button>
                         </div>

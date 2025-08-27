@@ -2,7 +2,7 @@
     <div class="p-6 bg-gray-100 min-h-screen">
         <div class="max-w-12xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
             <!-- Patient Header -->
-            <div class="bg-primary text-primary-content p-6">
+            <div class="bg-red-500 text-primary-content p-6">
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
                         <h1 class="text-2xl font-bold text-white">{{ patient.name }}</h1>

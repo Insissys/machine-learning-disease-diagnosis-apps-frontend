@@ -37,7 +37,7 @@
                             <td class="text-right">
                                 <div class="flex justify-end gap-2">
                                     <button type="button" @click="setVisited(queue)"
-                                        class="btn btn-sm btn-primary text-white mt-2">
+                                        class="btn btn-sm bg-red-500 text-white mt-2">
                                         Visit
                                     </button>
                                 </div>

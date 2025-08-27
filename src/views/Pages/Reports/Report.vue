@@ -2,7 +2,7 @@
     <div class="p-6 bg-gray-100 min-h-screen">
         <div class="max-w-12xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
             <!-- Report Header -->
-            <div class="bg-primary text-primary-content p-6 print:bg-primary print:text-primary-content">
+            <div class="bg-red-500 text-primary-content p-6 print:bg-red-500 print:text-primary-content">
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
                         <h1 class="text-2xl font-bold">{{ clinic.name }} - Medical History Report</h1>
@@ -17,7 +17,7 @@
                             </svg>
                             Export PDF
                         </button>
-                        <button @click="printReport" class="btn btn-sm btn-primary gap-2">
+                        <button @click="printReport" class="btn btn-sm bg-red-500 gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -395,7 +395,7 @@ onMounted(() => {
         padding: 0 !important;
     }
 
-    .print\:bg-primary {
+    .print\:bg-red-500 {
         background-color: hsl(var(--p)) !important;
         color: hsl(var(--pc)) !important;
     }

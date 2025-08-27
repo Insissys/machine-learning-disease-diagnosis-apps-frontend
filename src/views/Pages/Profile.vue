@@ -2,7 +2,7 @@
     <div class="p-6 bg-gray-100 min-h-screen">
         <div class="max-w-12xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
             <!-- Header -->
-            <div class="bg-primary text-white p-4">
+            <div class="bg-red-500 text-white p-4">
                 <h2 class="text-2xl font-bold">Profile</h2>
                 <p class="text-sm opacity-90">Manage your account and office information</p>
             </div>

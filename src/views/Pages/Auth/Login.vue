@@ -18,7 +18,7 @@
                         required />
                 </div>
 
-                <button class="btn btn-primary w-full text-white" :disab:disabled="isLoading" led="isLoading">
+                <button class="btn bg-red-500 w-full text-white" :disab:disabled="isLoading" led="isLoading">
                     <span v-if="!isLoading">Login</span>
                     <span v-else class="loading loading-spinner loading-sm"></span>
                 </button>

@@ -5,7 +5,7 @@
 
         <div class="max-w-12xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
             <!-- Form Header -->
-            <div class="bg-primary text-white p-4">
+            <div class="bg-red-500 text-white p-4">
                 <h2 class="text-2xl font-bold">
                     {{ isEditMode ? 'Edit Patient' : 'Register New Patient' }}
                 </h2>
@@ -94,7 +94,7 @@
                         <router-link to="/patients" class="btn btn-outline btn-secondary sm:w-auto w-full mb-2">
                             Cancel
                         </router-link>
-                        <button type="submit" class="btn btn-primary sm:w-auto w-full text-white mb-2"
+                        <button type="submit" class="btn bg-red-500 sm:w-auto w-full text-white mb-2"
                             :disabled="isSubmitting">
                             <span v-if="!isSubmitting">
                                 {{ isEditMode ? 'Update Patient' : 'Save Patient' }}
