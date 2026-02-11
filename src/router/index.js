@@ -1,6 +1,7 @@
 import { useProfileStore } from "@/stores/user";
 import { getToken } from "@/utils";
 import { createRouter, createWebHistory } from "vue-router";
+import { useUiStore } from "@/stores/ui";
 
 import HomeView from "@/views/index.vue";
 
@@ -197,6 +198,8 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const token = getToken();
   const userStore = useProfileStore();
+  const ui = useUiStore();
+  ui.startLoading();
 
   // 1️⃣ Guest only pages (login/register)
   if (to.meta.guestOnly && token) {
@@ -227,5 +230,13 @@ router.beforeEach(async (to, from, next) => {
 
   next();
 });
+
+router.afterEach(() => {
+  const ui = useUiStore();
+  setTimeout(() => {
+    ui.stopLoading();
+  }, 300);
+});
+
 
 export default router;
