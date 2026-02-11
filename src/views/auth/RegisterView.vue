@@ -88,7 +88,7 @@
       </p>
 
       <p class="text-xs text-center text-gray-400 mt-6">
-        © 2026 Duck Developers
+        © 2026 Pangkreas
       </p>
 
     </form>
