@@ -3,7 +3,7 @@ import { getToken } from "@/utils";
 import { createRouter, createWebHistory } from "vue-router";
 import { useUiStore } from "@/stores/ui";
 
-import HomeView from "@/views/index.vue";
+import HomeView from "@/views/dashboard/DashboardView.vue";
 
 const routes = [
   // ===== PRIVATE ROUTES =====

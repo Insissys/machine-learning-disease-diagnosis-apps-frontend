@@ -8,6 +8,7 @@ import "./styles/main.css";
 import setupPinia from "./plugins/pinia";
 import setupFontAwesome from "./plugins/fontawesome";
 import registerGlobalComponents from "./plugins/global-components";
+import VueApexCharts from "vue3-apexcharts";
 
 const app = createApp(App);
 
@@ -16,4 +17,6 @@ setupFontAwesome(app);
 registerGlobalComponents(app);
 
 app.use(router);
+app.use(VueApexCharts);
 app.mount("#app");
+app.component("apexchart", VueApexCharts);

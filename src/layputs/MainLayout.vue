@@ -93,7 +93,7 @@ const logout = async () => {
       </header>
 
       <!-- PAGE CONTENT -->
-      <main class="flex-1 p-6 bg-base-200/40">
+      <main class="flex-1 p-6 bg-gradient-to-br from-base-200/40 to-base-300/20">
         <slot />
       </main>
 
@@ -108,7 +108,7 @@ const logout = async () => {
       <label for="main-drawer" class="drawer-overlay"></label>
 
       <aside :class="[
-            'flex flex-col h-full bg-base-200 border-r transition-all duration-300 border-base-300/60',
+            'flex flex-col h-full bg-base-200/70 backdrop-blur-md border-r border-base-300/60 border-r transition-all duration-300 border-base-300/60',
             isCollapsed ? 'w-20' : 'w-64'
         ]">
 

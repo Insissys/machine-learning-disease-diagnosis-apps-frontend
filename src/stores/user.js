@@ -1,10 +1,10 @@
 import { 
-  getProfileApi,
-  getUsersApi,
-  getDoctorsApi,
-  createUserApi,
-  deleteUserApi,
-  toggleUserActiveApi,
+  fetchProfileService,
+  fetchAllUserService,
+  fetchDoctorsService,
+  createUserService,
+  deleteUserService,
+  toggleUserActiveService,
 } from "@/api";
 import { defineStore } from "pinia";
 
@@ -20,7 +20,7 @@ export const useProfileStore = defineStore("profile", {
   actions: {
     async fetchProfile() {
       try {
-        this.user = await getProfileApi();
+        this.user = await fetchProfileService();
       } catch (err) {
         this.user = null;
         throw err;
@@ -48,7 +48,7 @@ export const useUserStore = defineStore("users", {
     async fetchAllUsers() {
       this.loading = true;
       try {
-        this.users = await getUsersApi();
+        this.users = await fetchAllUserService();
       } finally {
         this.loading = false;
       }
@@ -57,7 +57,7 @@ export const useUserStore = defineStore("users", {
     async fetchUsersDoctor() {
       this.loading = true;
       try {
-        this.users = await getDoctorsApi();
+        this.users = await fetchDoctorsService();
       } finally {
         this.loading = false;
       }
@@ -68,22 +68,22 @@ export const useUserStore = defineStore("users", {
     },
 
     async createUser(payload) {
-      await createUserApi(payload);
+      await createUserService(payload);
       await this.fetchAllUsers(); // refresh list 🔥
     },
 
     async deleteUser(id) {
-      await deleteUserApi(id);
+      await deleteUserService(id);
       await this.fetchAllUsers();
     },
 
     async activateUser(id) {
-      await toggleUserActiveApi(id, true);
+      await toggleUserActiveService(id, true);
       await this.fetchAllUsers();
     },
 
     async deactivateUser(id) {
-      await toggleUserActiveApi(id, false);
+      await toggleUserActiveService(id, false);
       await this.fetchAllUsers();
     },
   },
