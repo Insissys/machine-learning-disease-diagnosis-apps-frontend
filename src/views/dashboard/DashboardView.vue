@@ -1,5 +1,5 @@
 <template>
-  <div class="p-8 space-y-6">
+  <div class="p-8 bg-gray-100 space-y-6">
 
     <!-- LAST UPDATE -->
     <div class="text-sm opacity-60">

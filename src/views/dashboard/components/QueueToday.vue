@@ -17,7 +17,7 @@
       <div class="overflow-x-auto mt-3">
         <table class="table table-zebra">
           <thead>
-            <tr class="hover:bg-base-200/50 transition">
+            <tr>
               <th>Registration Number</th>
               <th>Time</th>
               <th>Medical Record</th>
@@ -26,7 +26,7 @@
           </thead>
 
           <tbody>
-            <tr v-for="q in dashboardStore.todayQueueList" :key="q.id" class="hover:bg-gray-50">
+            <tr v-for="q in dashboardStore.todayQueueList" :key="q.id" class="hover:bg-base-200/40 transition-colors duration-200">
               <td>{{ q.registration_number }}</td>
               <td>{{ formatDate(q.created_at) }}</td>
               <td>{{ q.medical_record?.medical_record_number }}</td>

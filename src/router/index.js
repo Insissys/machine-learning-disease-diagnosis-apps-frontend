@@ -25,7 +25,7 @@ const routes = [
   {
     path: "/patients",
     name: "patients",
-    component: () => import("@/views/Pages/Patient/List.vue"),
+    component: () => import("@/views/Patient/ListView.vue"),
     meta: {
       layout: "main",
       requiresAuth: true,
@@ -40,11 +40,12 @@ const routes = [
   {
     path: "/patients/create",
     name: "patients.create",
-    component: () => import("@/views/Pages/Patient/Form.vue"),
+    component: () => import("@/views/Patient/FormView.vue"),
     meta: {
       layout: "main",
       requiresAuth: true,
       allowedRoles: ["superadmin", "admin"],
+      title: "Create Patients",
     },
   },
 
