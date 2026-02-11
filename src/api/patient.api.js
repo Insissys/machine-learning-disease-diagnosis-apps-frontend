@@ -1,7 +1,7 @@
 import api from "./axios";
 
 // ================= GET ALL PATIENTS =================
-export const getPatientsApi = async () => {
+export const fetchAllPatientsService = async () => {
   try {
     const res = await api.get("/patients");
     return res.data.data; // langsung return array patients
@@ -11,7 +11,7 @@ export const getPatientsApi = async () => {
 };
 
 // ================= GET PATIENT BY ID =================
-export const getPatientByIdApi = async (id) => {
+export const getPatientByIdService = async (id) => {
   try {
     const res = await api.get(`/patients/${id}`);
     return res.data.data;
@@ -21,7 +21,7 @@ export const getPatientByIdApi = async (id) => {
 };
 
 // ================= CREATE PATIENT =================
-export const createPatientApi = async (payload) => {
+export const createPatientService = async (payload) => {
   try {
     const res = await api.post("/patients", payload);
     return res.data;
@@ -31,7 +31,7 @@ export const createPatientApi = async (payload) => {
 };
 
 // ================= UPDATE PATIENT =================
-export const updatePatientApi = async (id, payload) => {
+export const updatePatientService = async (id, payload) => {
   try {
     const res = await api.put(`/patients/${id}`, payload);
     return res.data;
@@ -41,7 +41,7 @@ export const updatePatientApi = async (id, payload) => {
 };
 
 // ================= DELETE PATIENT =================
-export const deletePatientApi = async (id) => {
+export const deletePatientService = async (id) => {
   try {
     const res = await api.delete(`/patients/${id}`);
     return res.data;
