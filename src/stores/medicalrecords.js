@@ -1,4 +1,4 @@
-import { fetchMedicalRecordService } from "@/service/medicalrecord";
+import { fetchMedicalRecordService } from "@/api/medicalrecord";
 import { defineStore } from "pinia";
 
 export const useMedicalRecordsStore = defineStore("medicalrecords", {

@@ -196,8 +196,8 @@
 
 <script setup>
 import Errors from '@/components/Modals/Errors.vue'
-import { patchMedicalRecord } from '@/service/medicalrecord'
-import { predictDiseases } from '@/service/prediction'
+import { patchMedicalRecord } from '@/api/medicalrecord'
+import { predictDiseases } from '@/api/prediction'
 import { useVisitedStore } from '@/stores/queue'
 import { ref, onUnmounted, computed, watch } from 'vue'
 import Info from '@/components/Modals/Info.vue'

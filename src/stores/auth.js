@@ -1,34 +1,47 @@
-import { loginService, logoutService, registerService } from "@/service/auth";
 import { defineStore } from "pinia";
+import { loginApi, registerApi, logoutApi } from "@/api";
+import { setToken, clearToken, getToken } from "@/utils";
 import { useProfileStore } from "./user";
 
 export const useAuthStore = defineStore("auth", {
+  state: () => ({
+    token: getToken() || null,
+  }),
+
+  getters: {
+    isAuthenticated: (state) => !!state.token,
+  },
+
   actions: {
+    // 📝 REGISTER
     async register(payload) {
-      try {
-        await registerService(payload);
-      } catch (error) {
-        // console.error("Register error from store:", error);
-        throw error;
-      }
+      await registerApi(payload);
     },
 
+    // 🔐 LOGIN
     async login(email, password) {
-      try {
-        await loginService(email, password);
-      } catch (error) {
-        // console.error("Login error from store:", error);
-        throw error;
-      }
+      const data = await loginApi(email, password);
+
+      // simpan token ke state + localStorage
+      this.token = data.token;
+      setToken(data.token);
     },
 
+    // 🚪 LOGOUT
     async logout() {
       try {
-        await logoutService();
-      } catch (error) {
-        // console.error("Logout error from store:", error);
-        throw error;
+        await logoutApi();
+      } catch (err) {
+        console.warn("Logout request failed (ignored)");
       }
+
+      // clear token
+      this.token = null;
+      clearToken();
+
+      // clear user profile
+      const userStore = useProfileStore();
+      userStore.clearUser();
     },
   },
 });

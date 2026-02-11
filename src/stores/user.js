@@ -1,11 +1,11 @@
-import {
-  activateUserService,
-  createUserService,
-  deleteUserService,
-  fetchAllUserService,
-  fetchProfileService,
-  fetchUsersDoctorService,
-} from "@/service/user";
+import { 
+  getProfileApi,
+  getUsersApi,
+  getDoctorsApi,
+  createUserApi,
+  deleteUserApi,
+  toggleUserActiveApi,
+} from "@/api";
 import { defineStore } from "pinia";
 
 export const useProfileStore = defineStore("profile", {
@@ -13,13 +13,17 @@ export const useProfileStore = defineStore("profile", {
     user: null,
   }),
 
+  getters: {
+    role: (state) => state.user?.role?.name,
+  },
+
   actions: {
     async fetchProfile() {
       try {
-        const res = await fetchProfileService();
-        this.user = { ...res.data };
+        this.user = await getProfileApi();
       } catch (err) {
         this.user = null;
+        throw err;
       }
     },
 
@@ -29,78 +33,58 @@ export const useProfileStore = defineStore("profile", {
   },
 
   persist: {
-    paths: ["profile"],
     storage: sessionStorage,
+    paths: ["user"],
   },
 });
 
-export const useUserStore = defineStore("user", {
+export const useUserStore = defineStore("users", {
   state: () => ({
     users: [],
+    loading: false,
   }),
 
   actions: {
     async fetchAllUsers() {
+      this.loading = true;
       try {
-        const res = await fetchAllUserService();
-        this.users = res.data || [];
-      } catch (error) {
-        throw error;
+        this.users = await getUsersApi();
+      } finally {
+        this.loading = false;
       }
     },
 
     async fetchUsersDoctor() {
+      this.loading = true;
       try {
-        const res = await fetchUsersDoctorService();
-        this.users = res.data || [];
-      } catch (error) {
-        throw error;
+        this.users = await getDoctorsApi();
+      } finally {
+        this.loading = false;
       }
     },
 
-    async fetchUserById(id) {
-      try {
-        const user = this.users.find((user) => user.id === id);
-        if (user) {
-          return user;
-        } else {
-          throw new Error("User not found");
-        }
-      } catch (error) {
-        throw error;
-      }
+    getUserById(id) {
+      return this.users.find((u) => u.id === id);
+    },
+
+    async createUser(payload) {
+      await createUserApi(payload);
+      await this.fetchAllUsers(); // refresh list 🔥
     },
 
     async deleteUser(id) {
-      try {
-        await deleteUserService(id);
-      } catch (error) {
-        throw error;
-      }
-    },
-
-    async createUser(user) {
-      try {
-        await createUserService(user);
-      } catch (error) {
-        throw error;
-      }
+      await deleteUserApi(id);
+      await this.fetchAllUsers();
     },
 
     async activateUser(id) {
-      try {
-        await activateUserService({ id, is_active: true });
-      } catch (error) {
-        throw error;
-      }
+      await toggleUserActiveApi(id, true);
+      await this.fetchAllUsers();
     },
 
     async deactivateUser(id) {
-      try {
-        await activateUserService({ id, is_active: false });
-      } catch (error) {
-        throw error;
-      }
+      await toggleUserActiveApi(id, false);
+      await this.fetchAllUsers();
     },
   },
 });

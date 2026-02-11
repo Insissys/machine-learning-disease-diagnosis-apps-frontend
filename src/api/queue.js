@@ -1,4 +1,4 @@
-import api from ".";
+import api from "./axios";
 
 export async function fetchAllQueueService(userId) {
   try {
