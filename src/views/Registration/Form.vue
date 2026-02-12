@@ -390,7 +390,7 @@ async function savePatient() {
             modalRef.value.show(RegistrationStore.error || 'Something went wrong')
         }
     } catch (error) {
-        console.log(error)
+        console.error(error)
         // modalRef.value.show(error.message || 'Something went wrong')
     } finally {
         isSubmitting.value = false

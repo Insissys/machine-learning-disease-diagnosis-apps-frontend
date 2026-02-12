@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { fetchDashboardStatsService } from "@/api/dashboard.api";
+import { fetchDashboardStatsService } from "@/api";
 import { useProfileStore } from "./user";
 
 export const useDashboardStore = defineStore("dashboard", {

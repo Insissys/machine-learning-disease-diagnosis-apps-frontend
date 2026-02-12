@@ -52,7 +52,7 @@ const routes = [
   {
     path: "/registrations",
     name: "registrations",
-    component: () => import("@/views/Pages/Registration/List.vue"),
+    component: () => import("@/views/Registration/List.vue"),
     meta: {
       layout: "main",
       requiresAuth: true,
@@ -67,18 +67,19 @@ const routes = [
   {
     path: "/registrations/create",
     name: "registrations.create",
-    component: () => import("@/views/Pages/Registration/Form.vue"),
+    component: () => import("@/views/Registration/Form.vue"),
     meta: {
       layout: "main",
       requiresAuth: true,
       allowedRoles: ["superadmin", "admin"],
+      title: "Create Registrations",
     },
   },
 
   {
     path: "/queuing",
     name: "doctor.queuing",
-    component: () => import("@/views/Pages/Doctor/List.vue"),
+    component: () => import("@/views/Doctor/List.vue"),
     meta: {
       layout: "main",
       requiresAuth: true,
@@ -93,18 +94,19 @@ const routes = [
   {
     path: "/queuing/input-symptom",
     name: "doctor.queuing.input-symptom",
-    component: () => import("@/views/Pages/Doctor/Form.vue"),
+    component: () => import("@/views/Doctor/Form.vue"),
     meta: {
       layout: "main",
       requiresAuth: true,
       allowedRoles: ["superadmin", "doctor"],
+      title: "Queuing",
     },
   },
 
   {
     path: "/medical-records",
     name: "medical-records",
-    component: () => import("@/views/Pages/MedicalRecord/List.vue"),
+    component: () => import("@/views/MedicalRecord/List.vue"),
     meta: {
       layout: "main",
       requiresAuth: true,
@@ -119,18 +121,19 @@ const routes = [
   {
     path: "/medical-records/info",
     name: "medicalrecords.info",
-    component: () => import("@/views/Pages/MedicalRecord/Form.vue"),
+    component: () => import("@/views/MedicalRecord/Form.vue"),
     meta: {
       layout: "main",
       requiresAuth: true,
       allowedRoles: ["superadmin", "admin", "doctor"],
+      title: "Info Medical Records",
     },
   },
 
   {
     path: "/users",
     name: "users",
-    component: () => import("@/views/Pages/Users/List.vue"),
+    component: () => import("@/views/Users/List.vue"),
     meta: {
       layout: "main",
       requiresAuth: true,
@@ -145,11 +148,12 @@ const routes = [
   {
     path: "/users/create",
     name: "users.create",
-    component: () => import("@/views/Pages/Users/Form.vue"),
+    component: () => import("@/views/Users/Form.vue"),
     meta: {
       layout: "main",
       requiresAuth: true,
       allowedRoles: ["superadmin", "admin"],
+      title: "Create Users",
     },
   },
 

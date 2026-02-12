@@ -1,4 +1,4 @@
-import { fetchAllQueueService } from "@/api/queue.api";
+import { fetchAllQueueService } from "@/api";
 import { defineStore } from "pinia";
 
 export const useQueueStore = defineStore("queue", {

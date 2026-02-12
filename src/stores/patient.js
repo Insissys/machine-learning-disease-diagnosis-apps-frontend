@@ -5,7 +5,7 @@ import {
   createPatientService,
   updatePatientService,
   deletePatientService,
-} from "@/api/patient.api";
+} from "@/api";
 
 export const usePatientStore = defineStore("patient", {
   state: () => ({
@@ -19,8 +19,6 @@ export const usePatientStore = defineStore("patient", {
   // 🔎 SEARCH FILTER
   getters: {
     filteredPatients: (state) => {
-      console.log(state.patients, "aa");
-      
       if (!state.search) return state.patients;
 
       const keyword = state.search.toLowerCase();
@@ -42,8 +40,6 @@ export const usePatientStore = defineStore("patient", {
 
       try {
         const res = await fetchAllPatientsService();
-        console.log(res.data);
-        
         this.patients = res;
       } catch (err) {
         this.error = err.response?.data?.message || err.message;

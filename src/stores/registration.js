@@ -3,7 +3,7 @@ import {
   fetchAllRegisterService,
   createRegistrationService,
   deleteRegistrationService
-} from "@/api/registration.api";
+} from "@/api";
 
 export const useRegistrationStore = defineStore("registration", {
   state: () => ({
@@ -57,7 +57,6 @@ export const useRegistrationStore = defineStore("registration", {
         await createRegistrationService(registrationData);
         return true;
       } catch (err) {
-        // console.log("Create failed:", err);
         this.error = err.response?.data?.message || err.message;
         return false;
       } finally {

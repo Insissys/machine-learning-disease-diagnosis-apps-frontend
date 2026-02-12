@@ -1,4 +1,4 @@
-import { fetchMedicalRecordService } from "@/api/medicalrecord.api";
+import { fetchMedicalRecordService } from "@/api";
 import { defineStore } from "pinia";
 
 export const useMedicalRecordsStore = defineStore("medicalrecords", {
@@ -10,7 +10,7 @@ export const useMedicalRecordsStore = defineStore("medicalrecords", {
     async fetchMedicalRecords(id) {
       try {
         const res = await fetchMedicalRecordService(id);
-        this.medicalrecords = res.data.data;
+        this.medicalrecords = res.data;
       } catch (error) {
         throw error;
       }

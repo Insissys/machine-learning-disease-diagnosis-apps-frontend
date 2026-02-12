@@ -19,10 +19,14 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
+    console.log("masuk");
+    
     const originalRequest = error.config;
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
+      console.log("satu");
+      
 
       try {
         const res = await api.post("/auth/refresh-token");
