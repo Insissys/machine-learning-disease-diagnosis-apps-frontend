@@ -40,7 +40,7 @@ export const useRegistrationStore = defineStore("registration", {
 
       try {
         const res = await fetchAllRegisterService();
-        this.registrations = res.data.data;
+        this.registrations = res.data;
       } catch (err) {
         this.error = err.response?.data?.message || err.message;
         throw err;

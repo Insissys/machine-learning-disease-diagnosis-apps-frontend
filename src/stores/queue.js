@@ -36,7 +36,7 @@ export const useQueueStore = defineStore("queue", {
 
       try {
         const res = await fetchAllQueueService(userId);
-        this.queue = res.data.data;
+        this.queue = res.data;
       } catch (err) {
         this.error = err;
       } finally {

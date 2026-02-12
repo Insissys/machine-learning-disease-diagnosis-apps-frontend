@@ -1,10 +1,10 @@
 import { defineStore } from "pinia";
 import {
   fetchAllPatientsService,
-  getPatientByIdApi,
-  createPatientApi,
-  updatePatientApi,
-  deletePatientApi,
+  getPatientByIdService,
+  createPatientService,
+  updatePatientService,
+  deletePatientService,
 } from "@/api/patient.api";
 
 export const usePatientStore = defineStore("patient", {
@@ -19,6 +19,8 @@ export const usePatientStore = defineStore("patient", {
   // 🔎 SEARCH FILTER
   getters: {
     filteredPatients: (state) => {
+      console.log(state.patients, "aa");
+      
       if (!state.search) return state.patients;
 
       const keyword = state.search.toLowerCase();
@@ -40,7 +42,9 @@ export const usePatientStore = defineStore("patient", {
 
       try {
         const res = await fetchAllPatientsService();
-        this.patients = res.data.data;
+        console.log(res.data);
+        
+        this.patients = res;
       } catch (err) {
         this.error = err.response?.data?.message || err.message;
       } finally {
@@ -54,7 +58,7 @@ export const usePatientStore = defineStore("patient", {
       this.error = null;
 
       try {
-        const res = await getPatientByIdApi(id);
+        const res = await getPatientByIdService(id);
         this.selectedPatient = res.data.data;
         return res.data.data;
       } catch (err) {
@@ -71,7 +75,7 @@ export const usePatientStore = defineStore("patient", {
       this.error = null;
 
       try {
-        await createPatientApi(payload);
+        await createPatientService(payload);
         return true;
       } catch (err) {
         this.error = err.response?.data?.message || err.message;
@@ -87,7 +91,7 @@ export const usePatientStore = defineStore("patient", {
       this.error = null;
 
       try {
-        await updatePatientApi(payload.id, payload);
+        await updatePatientService(payload.id, payload);
         return true;
       } catch (err) {
         this.error = err.response?.data?.message || err.message;
@@ -103,7 +107,7 @@ export const usePatientStore = defineStore("patient", {
       this.error = null;
 
       try {
-        await deletePatientApi(id);
+        await deletePatientService(id);
 
         // remove from state (optimistic update 🔥)
         this.patients = this.patients.filter(p => p.id !== id);

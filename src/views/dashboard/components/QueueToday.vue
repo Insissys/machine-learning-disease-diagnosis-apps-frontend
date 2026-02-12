@@ -15,7 +15,7 @@
       </div>
 
       <div class="overflow-x-auto mt-3">
-        <table class="table table-zebra">
+        <table class="table">
           <thead>
             <tr>
               <th>Registration Number</th>
