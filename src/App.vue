@@ -2,9 +2,9 @@
 import { RouterView, useRoute } from "vue-router";
 import { computed } from "vue";
 
-import MainLayout from "@/layputs/MainLayout.vue";
-import AuthLayout from "@/layputs/AuthLayout.vue";
-import EmptyLayout from "@/layputs/EmptyLayout.vue";
+import MainLayout from "@/layouts/MainLayout.vue";
+import AuthLayout from "@/layouts/AuthLayout.vue";
+import EmptyLayout from "@/layouts/EmptyLayout.vue";
 
 const route = useRoute();
 
