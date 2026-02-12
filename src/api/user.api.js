@@ -2,35 +2,59 @@ import api from "./axios";
 
 // 👤 PROFILE
 export const fetchProfileService = async () => {
-  const res = await api.get("/users/me");
-  return res.data.data;
+  try {
+    const res = await api.get("/users/me");
+    return res.data.data;
+  } catch (error) {
+    throw error.response?.data?.message || error.message;
+  }
 };
 
 // 👥 GET ALL USERS
 export const fetchAllUserService = async () => {
-  const res = await api.get("/users");
-  return res.data.data;
+  try {
+    const res = await api.get("/users");
+    return res.data.data;
+  } catch (error) {
+    throw error.response?.data?.message || error.message;
+  }
 };
 
 export const fetchDoctorsService = async () => {
-  const res = await api.get("/users", {
-    params: { name: "doctor" },
-  });
-  return res.data.data;
+  try {
+    const res = await api.get("/users", {
+      params: { name: "doctor" },
+    });
+    return res.data.data;
+  } catch (error) {
+    throw error.response?.data?.message || error.message;
+  }
 };
 
 // ➕ CRUD
 export const createUserService = async (payload) => {
-  const res = await api.post("/users", payload);
-  return res.data;
+  try {
+    const res = await api.post("/users", payload);
+    return res.data;
+  } catch (error) {
+    throw error.response?.data?.message || error.message;
+  }
 };
 
 export const deleteUserService = async (id) => {
-  const res = await api.delete(`/users/${id}`);
-  return res.data;
+  try {
+    const res = await api.delete(`/users/${id}`);
+    return res.data;
+  } catch (error) {
+    throw error.response?.data?.message || error.message;
+  }
 };
 
 export const toggleUserActiveService = async (id, is_active) => {
-  const res = await api.patch(`/users/activate/${id}`, { is_active });
-  return res.data;
+  try {
+    const res = await api.patch(`/users/activate/${id}`, { is_active });
+    return res.data;
+  } catch (error) {
+    throw error.response?.data?.message || error.message;
+  }
 };

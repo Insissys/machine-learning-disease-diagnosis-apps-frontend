@@ -1,5 +1,9 @@
-import api from "@/api/axios";
 import { defineStore } from "pinia";
+import {
+  fetchAllRegisterService,
+  createRegistrationService,
+  deleteRegistrationService
+} from "@/api/registration.api";
 
 export const useRegistrationStore = defineStore("registration", {
   state: () => ({
@@ -35,9 +39,10 @@ export const useRegistrationStore = defineStore("registration", {
       this.error = null;
 
       try {
-        const res = await api.get("/patient/registration");
+        const res = await fetchAllRegisterService();
         this.registrations = res.data.data;
       } catch (err) {
+        this.error = err.response?.data?.message || err.message;
         throw err;
       } finally {
         this.isLoading = false;
@@ -49,7 +54,7 @@ export const useRegistrationStore = defineStore("registration", {
       this.error = null;
 
       try {
-        await api.post("/patient/registration", registrationData);
+        await createRegistrationService(registrationData);
         return true;
       } catch (err) {
         // console.log("Create failed:", err);
@@ -65,9 +70,10 @@ export const useRegistrationStore = defineStore("registration", {
       this.error = null;
 
       try {
-        await api.delete(`/patient/registration/${id}`);
+        await deleteRegistrationService(id);
         this.registrations = this.registrations.filter((p) => p.id !== id);
       } catch (err) {
+        this.error = err.response?.data?.message || err.message;
         throw err.response?.data?.message || err.message;
       } finally {
         this.isLoading = false;

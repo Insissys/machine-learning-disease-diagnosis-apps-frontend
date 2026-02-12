@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import {
-  getPatientsApi,
+  fetchAllPatientsService,
   getPatientByIdApi,
   createPatientApi,
   updatePatientApi,
@@ -39,7 +39,7 @@ export const usePatientStore = defineStore("patient", {
       this.error = null;
 
       try {
-        const res = await getPatientsApi();
+        const res = await fetchAllPatientsService();
         this.patients = res.data.data;
       } catch (err) {
         this.error = err.response?.data?.message || err.message;
