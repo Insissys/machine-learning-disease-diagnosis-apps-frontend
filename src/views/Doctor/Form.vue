@@ -7,10 +7,11 @@
             <!-- Left Column -->
             <div class="space-y-6">
                 <!-- Symptoms Input Form -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="bg-white rounded-2xl shadow-lg border border-base-300/40 overflow-hidden">
                     <!-- Form Header -->
-                    <div class="bg-primary text-white p-4">
-                        <h2 class="text-2xl font-bold">
+                    <div class="bg-gradient-to-r from-primary to-primary/80 text-white p-6 rounded-t-2xl">
+                        <h2 class="text-xl font-semibold flex items-center gap-2">
+                            <font-awesome-icon icon="stethoscope" />
                             Symptoms Input
                         </h2>
                         <p class="text-sm opacity-90">
@@ -61,15 +62,16 @@
                                 <label class="label">
                                     <span class="label-text font-medium">Input Symptoms</span>
                                 </label>
-                                <textarea v-model="symptom" class="textarea w-full resize-none mb-2" rows="5"
+                                <textarea v-model="symptom" class="textarea textarea-bordered bg-base-100 w-full focus:ring-2 focus:ring-primary/20 mb-2" rows="5"
                                     :disabled="prediction">
                                 </textarea>
                                 <button @click="startVoiceInput" type="button"
-                                    class="btn btn-primary sm:w-auto w-full text-white" :disabled="isListening">
+                                    class="btn btn-outline btn-primary gap-2" :disabled="isListening">
+                                    <font-awesome-icon icon="microphone" />
                                     <span v-if="!isListening">
                                         Listening
                                     </span>
-                                    <span v-else class="loading loading-spinner"></span>
+                                    <span v-else class="loading loading-spinner loading-md"></span>
                                 </button>
                             </div>
                         </div>
@@ -99,8 +101,11 @@
             <!-- Right Column -->
             <div class="space-y-6">
                 <!-- ML Diagnosis Result -->
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <h2 class="text-2xl font-bold mb-4">Diagnosis</h2>
+                <div class="bg-white rounded-2xl shadow-lg border border-base-300/40 p-6">
+                    <h2 class="text-xl font-semibold flex items-center gap-2 mb-6">
+                        <font-awesome-icon icon="brain" class="text-primary"/>
+                        AI Diagnosis Result
+                    </h2>
                     <div v-if="prediction">
                         <div v-if="!isChoosen">
                             <div class="mb-4">
@@ -108,7 +113,8 @@
                                 <p class="mb-2">(select one)</p>
                                 <div class="space-y-2">
                                     <div v-for="(item, index) in prediction.predictions" :key="index"
-                                        class="flex items-center p-2 border rounded hover:bg-gray-50">
+                                        class="p-4 rounded-xl border border-base-300 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
+                                        :class="selectedDiagnosis === item ? 'border-primary bg-primary/5' : ''">
                                         <input type="radio" :id="'diagnosis-' + index" v-model="selectedDiagnosis"
                                             :value="item" class="radio radio-primary mr-3" :disabled="isChoosen">
                                         <label :for="'diagnosis-' + index" class="flex-1">
@@ -182,7 +188,11 @@
                     </div>
                     <div v-else class="text-gray-400 italic">
                         <div v-if="!isSubmitting">
-                            No result yet. Please input symptoms first.
+                           <div class="flex flex-col items-center justify-center py-12 text-base-content/50">
+                                <font-awesome-icon icon="file-medical" class="text-4xl mb-3"/>
+                                <p>No diagnosis yet</p>
+                                <p class="text-sm">Enter symptoms to generate prediction</p>
+                            </div>
                         </div>
                         <div v-else>
                             <span class="loading loading-spinner"></span>
@@ -196,8 +206,8 @@
 
 <script setup>
 import Errors from '@/components/Modals/Errors.vue'
-import { patchMedicalRecord } from '@/api/medicalrecord'
-import { predictDiseases } from '@/api/prediction'
+import { patchMedicalRecordService } from '@/api/medicalrecord.api'
+import { predictDiseasesService } from '@/api/prediction.api'
 import { useVisitedStore } from '@/stores/queue'
 import { ref, onUnmounted, computed, watch } from 'vue'
 import Info from '@/components/Modals/Info.vue'
@@ -232,7 +242,7 @@ const submitForm = async () => {
     reset()
     isSubmitting.value = true
     try {
-        const response = await predictDiseases(symptom.value.trim())
+        const response = await predictDiseasesService(symptom.value.trim())
         prediction.value = {
             predictions: response.data.data.predictions,
             recommendations: response.data.data.recommendations,
@@ -297,7 +307,7 @@ const submitAsMedicalRecord = async () => {
 
     isSubmitting.value = true
     try {
-        const response = await patchMedicalRecord(patient.value.medical_record.id, patient.value.medical_record)
+        const response = await patchMedicalRecordService(patient.value.medical_record.id, patient.value.medical_record)
         await infoModal.value.show(response.message || 'Medical Record Updated')
     } catch (err) {
         modalRef.value.show(err.response.data.message || err.message || err)
