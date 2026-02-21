@@ -4,17 +4,18 @@
     <Delete ref="deleteModal" @confirm="confirmDelete" />
 
     <div class="p-6 bg-gray-100 min-h-screen">
-        <div class="max-w-12xl mx-auto bg-white rounded-lg shadow-md p-6">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+        <div class="p-6 space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-800">User Management</h2>
-                    <p class="text-sm text-gray-500 mt-1">Total users: {{ userStore.users?.length }}</p>
+                    <h2 class="text-2xl font-bold">User Management</h2>
+                    <p class="text-sm opacity-60">Total users: {{ userStore.users?.length }}</p>
                 </div>
-                <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                    <div class="relative flex-1 sm:w-64">
-                        <input v-model="searchQuery" type="text" placeholder="Search" class="input w-full" />
+                <div class="flex gap-3">
+                    <div class="relative">
+                        <input v-model="searchQuery" type="text" placeholder="Search" class="input input-bordered w-64 pl-10" />
+                        <span class="absolute left-3 top-2.5 opacity-50">🔍</span>
                     </div>
-                    <router-link to="/users/create" class="btn btn-primary gap-2 text-white">
+                    <router-link to="/users/create" class="btn btn-primary text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -24,93 +25,97 @@
                 </div>
             </div>
 
-            <div class="overflow-x-auto border rounded-lg">
-                <table class="table w-full">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="w-2/6">User</th>
-                            <th class="w-2/6">Email</th>
-                            <th class="w-1/6">Role</th>
-                            <th class="w-1/6">Account Status</th>
-                            <th class="w-1/6 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="user in paginatedUsers" :key="user.id" class="hover:bg-gray-50 transition-colors">
-                            <td>
-                                <div class="flex items-center gap-3">
-                                    <div>
-                                        <div class="font-medium">{{ user.name }}</div>
-                                        <div class="text-sm text-gray-500">Expired date: {{ formatDate(user.expired)
-                                            }}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="font-medium">{{ user.email }}</td>
-                            <td>{{ user.role.name }}</td>
-                            <td>
-                                <span class="badge text-white"
-                                    :class="{ 'badge-primary': user.is_active, 'badge-secondary': !user.is_active }">
-                                    {{ user.is_active ? 'active' : 'inactive' }}
-                                </span>
-                            </td>
-                            <td class="text-right">
-                                <div class="flex justify-end gap-2">
-                                    <!-- Activate/Active -->
-                                    <button class="btn btn-ghost btn-sm btn-square tooltip"
-                                        @click="() => user.is_active ? deactivateUser(user.id) : activateUser(user.id)"
-                                        :data-tip="user.is_active ? 'Deactivate' : 'Activate'">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path v-if="!user.is_active" stroke-linecap="round" stroke-linejoin="round"
-                                                stroke-width="2" d="M5 13l4 4L19 7" />
-                                            <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                    </button>
-
-                                    <!-- Edit -->
-                                    <router-link :to="``"
-                                        class="btn btn-ghost btn-sm btn-square text-info tooltip" data-tip="Edit">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5 m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828 l8.586-8.586z" />
-                                        </svg>
-                                    </router-link>
-
-                                    <!-- Delete -->
-                                    <button class="btn btn-ghost btn-sm btn-square text-error tooltip"
-                                        @click="askToDelete(user.id)" data-tip="Delete">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7 m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr v-if="filteredUsers.length === 0">
-                            <td colspan="5" class="text-center py-8">
-                                <div class="flex flex-col items-center justify-center gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    <p class="text-gray-500">No users found</p>
-                                    <router-link to="/users/create" class="btn btn-sm btn-primary mt-2 text-white">
-                                        Add New User
-                                    </router-link>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="card bg-base-100 shadow-sm border border-base-300/60">
+                <div class="card-body p-0">
+                    <div class="overflow-x-auto border rounded-2xl">
+                        <table class="table w-full">
+                            <thead class="bg-base-200/60 text-base-content/70 text-xs uppercase tracking-wider">
+                                <tr>
+                                    <th class="w-2/6">User</th>
+                                    <th class="w-2/6">Email</th>
+                                    <th class="w-1/6">Role</th>
+                                    <th class="w-1/6">Account Status</th>
+                                    <th class="w-1/6 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="user in paginatedUsers" :key="user.id" class="hover:bg-base-200/40 transition-colors duration-200">
+                                    <td>
+                                        <div class="flex items-center gap-3">
+                                            <div>
+                                                <div class="font-medium">{{ user.name }}</div>
+                                                <div class="text-sm text-gray-500">Expired date: {{ formatDate(user.expired)
+                                                    }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="font-medium">{{ user.email }}</td>
+                                    <td>{{ user.role.name }}</td>
+                                    <td>
+                                        <span class="badge text-white"
+                                            :class="{ 'badge-primary': user.is_active, 'badge-secondary': !user.is_active }">
+                                            {{ user.is_active ? 'active' : 'inactive' }}
+                                        </span>
+                                    </td>
+                                    <td class="text-right">
+                                        <div class="flex justify-end gap-2">
+                                            <!-- Activate/Active -->
+                                            <button class="btn btn-ghost btn-sm btn-square tooltip"
+                                                @click="() => user.is_active ? deactivateUser(user.id) : activateUser(user.id)"
+                                                :data-tip="user.is_active ? 'Deactivate' : 'Activate'">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path v-if="!user.is_active" stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M5 13l4 4L19 7" />
+                                                    <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </button>
+        
+                                            <!-- Edit -->
+                                            <router-link :to="``"
+                                                class="btn btn-ghost btn-sm btn-square text-info tooltip" data-tip="Edit">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5 m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828 l8.586-8.586z" />
+                                                </svg>
+                                            </router-link>
+        
+                                            <!-- Delete -->
+                                            <button class="btn btn-ghost btn-sm btn-square text-error tooltip"
+                                                @click="askToDelete(user.id)" data-tip="Delete">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7 m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr v-if="filteredUsers.length === 0">
+                                    <td colspan="5" class="text-center py-8">
+                                        <div class="flex flex-col items-center justify-center gap-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <p class="text-gray-500">No users found</p>
+                                            <router-link to="/users/create" class="btn btn-sm btn-primary mt-2 text-white">
+                                                Add New User
+                                            </router-link>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
-            <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="border-t border-base-300/60 p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div class="text-sm text-gray-500">
                     Showing {{ startItem }}-{{ endItem }} of {{ filteredUsers.length }} users
                 </div>
