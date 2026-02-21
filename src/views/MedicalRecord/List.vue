@@ -3,72 +3,77 @@
         <Errors ref="modalRef" />
         <Info ref="infoModal" />
 
-        <div class="max-w-12xl mx-auto bg-white rounded-lg shadow-md p-6">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+        <div class="p-6 space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-800">Medical Records</h2>
-                    <p class="text-sm text-gray-500 mt-1">Total patients: {{ patientStore.patients?.length }}</p>
+                    <h2 class="text-2xl font-bold">Medical Records</h2>
+                    <p class="text-sm opacity-60">Total patients: {{ patientStore.patients?.length }}</p>
                 </div>
-                <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                    <div class="relative flex-1 sm:w-64">
-                        <input v-model="patientStore.search" type="text" placeholder="Search" class="input w-full" />
+                <div>
+                    <div class="relative">
+                        <input v-model="patientStore.search" type="text" placeholder="Search" class="input input-bordered w-64 pl-10" />
+                        <span class="absolute left-3 top-2.5 opacity-50">🔍</span>
                     </div>
                 </div>
             </div>
 
-            <div class="overflow-x-auto border rounded-lg">
-                <table class="table w-full">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="w-1/6">Medical Record</th>
-                            <th class="w-2/6">Patient Name</th>
-                            <th class="w-1/6">Gender</th>
-                            <th class="w-1/6">Date of Birth</th>
-                            <th class="w-1/6 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="patient in paginatedPatients" :key="patient.id"
-                            class="hover:bg-gray-50 transition-colors">
-                            <td>{{ patient.medical_record_number }}</td>
-                            <td>{{ patient.name }}</td>
-                            <td>
-                                <span
-                                    :class="`badge ${patient.gender?.toLowerCase() === 'male' ? 'badge-info' : 'badge-secondary'} text-white`">
-                                    {{ patient.gender }}
-                                </span>
-                            </td>
-                            <td>{{ formatDate(patient.birth_date) }}</td>
-                            <td class="text-right">
-                                <div class="flex justify-end gap-2">
-                                    <button @click="redirectTo(patient.id)"
-                                        class="tooltip btn btn-ghost btn-sm btn-square text-info" data-tip="Info">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr v-if="patientStore.filteredPatients?.length === 0">
-                            <td colspan="5" class="text-center py-8">
-                                <div class="flex flex-col items-center justify-center gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    <p class="text-gray-500">No medical records found</p>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="card bg-base-100 shadow-sm border border-base-300/60">
+                <div class="card-body p-0">
+                    <div class="overflow-x-auto border border-base-300/60 rounded-2xl">
+                        <table class="table w-full">
+                            <thead class="bg-base-200/60 text-base-content/70 text-xs uppercase tracking-wider">
+                                <tr>
+                                    <th class="w-1/6">Medical Record</th>
+                                    <th class="w-2/6">Patient Name</th>
+                                    <th class="w-1/6">Gender</th>
+                                    <th class="w-1/6">Date of Birth</th>
+                                    <th class="w-1/6 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="patient in paginatedPatients" :key="patient.id"
+                                    class="hover:bg-base-200/40 transition-colors duration-200">
+                                    <td>{{ patient.medical_record_number }}</td>
+                                    <td>{{ patient.name }}</td>
+                                    <td>
+                                        <span
+                                            :class="`badge ${patient.gender?.toLowerCase() === 'male' ? 'badge-info' : 'badge-secondary'} text-white`">
+                                            {{ patient.gender }}
+                                        </span>
+                                    </td>
+                                    <td>{{ formatDate(patient.birth_date) }}</td>
+                                    <td class="text-right">
+                                        <div class="flex justify-end gap-2">
+                                            <button @click="redirectTo(patient.id)"
+                                                class="tooltip btn btn-ghost btn-sm btn-square text-info" data-tip="Info">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr v-if="patientStore.filteredPatients?.length === 0">
+                                    <td colspan="5" class="text-center py-8">
+                                        <div class="flex flex-col items-center justify-center gap-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <p class="text-gray-500">No medical records found</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
-            <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="border-t border-base-300/60 p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div class="text-sm text-gray-500">
                     Showing {{ startItem }}-{{ endItem }} of {{ patientStore.filteredPatients?.length }} patients
                 </div>
