@@ -1,5 +1,5 @@
 <template>
-    <div class="p-6 bg-gray-100 min-h-screen">
+    <div class="p-6 min-h-screen">
         <Errors ref="modalRef" />
         <Info ref="infoModal" @callback="redirectBack" />
 

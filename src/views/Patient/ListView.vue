@@ -16,13 +16,13 @@
 
                 <div class="flex gap-3">
                     <div class="relative">
-                    <input
-                        v-model="patientStore.search"
-                        type="text"
-                        placeholder="Search patient..."
-                        class="input input-bordered w-64 pl-10"
-                    />
-                    <span class="absolute left-3 top-2.5 opacity-50">🔍</span>
+                        <input
+                            v-model="patientStore.search"
+                            type="text"
+                            placeholder="Search patient..."
+                            class="input input-bordered w-64 pl-10"
+                        />
+                        <span class="absolute left-3 top-2.5 opacity-50">🔍</span>
                     </div>
 
                     <router-link to="/patients/create" class="btn btn-primary text-white">
